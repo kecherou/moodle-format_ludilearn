@@ -173,6 +173,10 @@ class renderer extends section_renderer {
         // Calculate percentage of each hexad.
         $total = $data->hexadscores->achiever + $data->hexadscores->player + $data->hexadscores->socialiser +
             $data->hexadscores->freespirit + $data->hexadscores->disruptor + $data->hexadscores->philanthropist;
+        // Avoid division by zero.
+        if ($total == 0) {
+            $total = 1;
+        }
         $data->hexadscores->achieverpercentage = intval($data->hexadscores->achiever * 100 / $total) . '%';
         $data->hexadscores->playerpercentage = intval($data->hexadscores->player * 100 / $total) . '%';
         $data->hexadscores->socialiserpercentage = intval($data->hexadscores->socialiser * 100 / $total) . '%';
