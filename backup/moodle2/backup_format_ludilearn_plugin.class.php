@@ -80,28 +80,32 @@ class backup_format_ludilearn_plugin extends backup_format_plugin {
             ['courseid' => backup::VAR_COURSEID, 'sectionid' => backup::VAR_SECTIONID]);
 
         $bysection->set_source_sql('
-            SELECT * FROM {format_ludilearn_bysection} WHERE gameelementid IN (
-                SELECT id FROM {format_ludilearn_elements} WHERE courseid = :courseid AND sectionid = :sectionid)',
+            SELECT b.* FROM {format_ludilearn_bysection} b
+            JOIN {format_ludilearn_elements} e ON e.id = b.gameelementid
+            WHERE ecourseid = :courseid AND esectionid = :sectionid',
             ['courseid' => backup::VAR_COURSEID, 'sectionid' => backup::VAR_SECTIONID]
         );
 
         $params->set_source_sql('
-            SELECT * FROM {format_ludilearn_params} WHERE gameelementid IN (
-                SELECT id FROM {format_ludilearn_elements} WHERE courseid = :courseid AND sectionid = :sectionid)',
+            SELECT p.* FROM {format_ludilearn_params} p
+            JOIN {format_ludilearn_elements} e ON e.id = p.gameelementid
+            WHERE e.courseid = :courseid AND e.sectionid = :sectionid',
             ['courseid' => backup::VAR_COURSEID, 'sectionid' => backup::VAR_SECTIONID]
         );
 
         if ($this->get_setting_value('users')) {
             $attributions->set_source_sql('
-            SELECT * FROM {format_ludilearn_attributio} WHERE gameelementid IN (
-                SELECT id FROM {format_ludilearn_elements} WHERE courseid = :courseid AND sectionid = :sectionid)',
+                SELECT a.* FROM {format_ludilearn_attributio} a
+                JOIN {format_ludilearn_elements} e ON e.id = a.gameelementid
+                WHERE e.courseid = :courseid AND e.sectionid = :sectionid',
                 ['courseid' => backup::VAR_COURSEID, 'sectionid' => backup::VAR_SECTIONID]
             );
 
             $gameeleuser->set_source_sql('
-            SELECT * FROM {format_ludilearn_ele_user} WHERE attributionid IN (
-                SELECT id FROM {format_ludilearn_attributio} WHERE gameelementid IN (
-                    SELECT id FROM {format_ludilearn_elements} WHERE courseid = :courseid AND sectionid = :sectionid))',
+                SELECT eu.* FROM {format_ludilearn_ele_user} eu
+                JOIN {format_ludilearn_attributio} a ON a.id = eu.attributionid
+                JOIN {format_ludilearn_elements} e ON e.id = a.gameelementid
+                WHERE e.courseid = :courseid AND e.sectionid = :sectionid',
                 ['courseid' => backup::VAR_COURSEID, 'sectionid' => backup::VAR_SECTIONID]
             );
         } else {
@@ -136,15 +140,17 @@ class backup_format_ludilearn_plugin extends backup_format_plugin {
 
         if ($this->get_setting_value('users')) {
             $cmuser->set_source_sql('
-            SELECT * FROM {format_ludilearn_cm_user} WHERE attributionid IN (
-                SELECT id FROM {format_ludilearn_attributio} WHERE gameelementid IN (
-                    SELECT id FROM {format_ludilearn_elements} WHERE courseid = :courseid AND cmid = :cmid))',
+                SELECT u.* FROM {format_ludilearn_cm_user} u
+                JOIN {format_ludilearn_attributio} a ON a.id = u.attributionid
+                JOIN {format_ludilearn_elements} e ON e.id = a.gameelementid
+                WHERE e.courseid = :courseid AND u.cmid = :cmid',
                 ['courseid' => backup::VAR_COURSEID, 'cmid' => backup::VAR_MODID]
             );
 
             $cmparams->set_source_sql('
-            SELECT * FROM {format_ludilearn_cm_params} WHERE gameelementid IN (
-                SELECT id FROM {format_ludilearn_elements} WHERE courseid = :courseid AND cmid = :cmid)',
+                SELECT p.* FROM {format_ludilearn_cm_params} p
+                JOIN {format_ludilearn_elements} e ON e.id = p.gameelementid
+                WHERE e.courseid = :courseid AND p.cmid = :cmid',
                 ['courseid' => backup::VAR_COURSEID, 'cmid' => backup::VAR_MODID]
             );
         } else {
