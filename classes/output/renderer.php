@@ -170,6 +170,16 @@ class renderer extends section_renderer {
         $data->hexadscores->disruptor = $hexadscores->get_value('disruptor');
         $data->hexadscores->philanthropist = $hexadscores->get_value('philanthropist');
 
+        // Calculate percentage of each hexad.
+        $total = $data->hexadscores->achiever + $data->hexadscores->player + $data->hexadscores->socialiser +
+            $data->hexadscores->freespirit + $data->hexadscores->disruptor + $data->hexadscores->philanthropist;
+        $data->hexadscores->achieverpercentage = intval($data->hexadscores->achiever * 100 / $total) . '%';
+        $data->hexadscores->playerpercentage = intval($data->hexadscores->player * 100 / $total) . '%';
+        $data->hexadscores->socialiserpercentage = intval($data->hexadscores->socialiser * 100 / $total) . '%';
+        $data->hexadscores->freespiritpercentage = intval($data->hexadscores->freespirit * 100 / $total) . '%';
+        $data->hexadscores->disruptorpercentage = intval($data->hexadscores->disruptor * 100 / $total) . '%';
+        $data->hexadscores->philanthropistpercentage = intval($data->hexadscores->philanthropist * 100 / $total) . '%';
+
         $this->page->requires->js_call_amd('format_ludilearn/gameprofile', 'init',
             ['hexadscores' => $data->hexadscores]);
         return $this->render_from_template(
