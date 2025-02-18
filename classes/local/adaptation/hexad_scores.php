@@ -107,13 +107,12 @@ class hexad_scores {
 
         // Retrieve the scores for each Hexad type.
         foreach ($questioncorrespondences as $hexadtype => $questionids) {
-            $questionidsstring = implode(',', $questionids);
-
+            list($insql, $inparams) = $DB->get_in_or_equal($questionids, SQL_PARAMS_NAMED);
             $query = "SELECT questionid, score
                 FROM {format_ludilearn_answers}
                 WHERE userid = :userid
-                AND questionid IN ($questionidsstring)";
-            $params = ['userid' => $userid];
+                AND questionid $insql";
+            $params = array_merge(['userid' => $userid], $inparams);
             $scores = $DB->get_records_sql($query, $params);
 
             foreach ($scores as $score) {
