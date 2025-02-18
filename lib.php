@@ -573,12 +573,26 @@ class format_ludilearn extends core_courseformat\base {
      * @throws dml_exception
      */
     public function course_content_header() {
-        global $PAGE, $DB;
+        global $PAGE, $DB, $USER;
 
         if (($PAGE->bodyid != 'page-course-view-ludilearn' && $PAGE->bodyid != 'page-course-view-section-ludilearn')
             && $PAGE->cm == null) {
             return null;
         }
+
+        // If we are on questionaire page.
+        $context = context_course::instance($this->courseid);
+        $assignment = $this->get_format_options()['assignment'];
+        if ($assignment == 'automatic') {
+            $profile = $DB->get_record('format_ludilearn_profile', ['userid' => $USER->id]);
+            if (!$profile) {
+                // Verify if the user is a teacher or a manager.
+                if (!has_capability('moodle/course:viewhiddenactivities', $context)) {
+                    return null;
+                }
+            }
+        }
+
         $section = optional_param('section', -1, PARAM_INT);
         $hideheader = optional_param('hideheader', false, PARAM_BOOL);
         if ($hideheader) {
