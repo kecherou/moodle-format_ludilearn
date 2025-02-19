@@ -943,33 +943,34 @@
             line-height: 1.5;
         }
     }
-}
 
-/* Media Queries */
-@media (max-width: 768px) {
-    .hexad-scores-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .hexad-results {
-        padding: 1rem;
-
-        .score-item {
-            padding: 1rem;
+    /* Media Queries */
+    @media (max-width: 768px) {
+        .hexad-scores-grid {
+            grid-template-columns: 1fr;
         }
-    }
 
-    #ludilearn-questionnaire {
-        .rating-option {
-            .rating-label {
-                width: 35px;
-                height: 35px;
-                font-size: 0.75rem;
+        .hexad-results {
+            padding: 1rem;
+
+            .score-item {
+                padding: 1rem;
             }
         }
 
-        .scale-labels {
-            font-size: 0.75rem;
+        #ludilearn-questionnaire {
+            .rating-option {
+                .rating-label {
+                    width: 35px;
+                    height: 35px;
+                    font-size: 0.75rem;
+                }
+            }
+
+            .scale-labels {
+                font-size: 0.75rem;
+            }
         }
     }
 }
+
