@@ -140,14 +140,6 @@ class format_ludilearn_gameelement implements renderable, templatable {
                 if (!empty($cmidsequence)) {
                     $cm = $DB->get_record('course_modules', ['id' => $cmidsequence]);
                     if ($cm) {
-                        // Check if it's a subsection.
-                        $cminfo = get_fast_modinfo($this->course->id)->get_cm($cm->id);
-                        if ($cminfo->modname == 'subsection') {
-                            // Get section and the game element associated.
-                            $cm->subsection = $DB->get_record('course_sections',
-                                ['itemid' => $cminfo->instance, 'component' => 'mod_subsection']);
-                            $cm->subsection->gamelement = $this->get_element_by_section($cm->subsection->id, $gameelementtype);
-                        }
                         $this->section->cms[] = $cm;
                     }
                 }
@@ -197,10 +189,10 @@ class format_ludilearn_gameelement implements renderable, templatable {
         $data->sections = [];
         // For each section.
         foreach ($this->course->sections as $section) {
-            // Don't show hidden sections and subsections.
+            // Don't show hidden sections.
             $sectioninfo = get_fast_modinfo($this->course)->get_section_info($section->section);
             $uservisible = $format->is_section_visible($sectioninfo);
-            if (!$uservisible || $section->component == 'mod_subsection') {
+            if (!$uservisible) {
                 continue;
             }
 
@@ -289,50 +281,6 @@ class format_ludilearn_gameelement implements renderable, templatable {
 
                     // Add the label to the section.
                     // And no need to continue because label is not gamified.
-                    $data->section->cms[] = $cmdata;
-                    continue;
-                }
-
-                // Verify if the cm is a subsection.
-                if (isset($cm->subsection)) {
-                    // Don't show if the section is not visible.
-                    $sectioninfo = get_fast_modinfo($this->course)->get_section_info($cm->subsection->section);
-                    $uservisible = $format->is_section_visible($sectioninfo);
-                    if (!$uservisible) {
-                        continue;
-                    }
-
-                    $cmdata->subsection = true;
-                    $cmdata->courseid = $this->course->id;
-                    $cmdata->section = $cm->subsection->section;
-                    $cmdata->name = format_string(get_section_name($this->course, $cm->subsection));
-                    if (isset($cm->subsection->gameelement)) {
-                        $type = $cm->subsection->gameelement->get_type();
-                        $cmdata->$type = true;
-                        $cmdata->parameters = new stdClass();
-
-                        // Get the section parameters.
-                        foreach ($cm->subsection->gameelement->get_parameters() as $key => $value) {
-                            $cmdata->parameters->$key = $value;
-                        }
-
-                        // Populate the section parameters.
-                        $cmdata->parameters = $this->populate_section($cmdata->parameters, $cm->subsection, $type);
-
-                        $cmdata->parameters->gamified = false;
-                        if ($cm->subsection->gameelement->get_count_cm_gamified() > 0) {
-                            $cmdata->parameters->gamified = true;
-                        }
-
-                        if ($cm->subsection->visible) {
-                            $cmdata->visible = true;
-                        }
-
-                    }
-                    if (has_capability('moodle/course:update', $contextcourse) || $sectioninfo->get_available()) {
-                        $urlsection = new moodle_url('/course/section.php?id=' . $cm->subsection->id);
-                        $cmdata->url = $urlsection->out(false);
-                    }
                     $data->section->cms[] = $cmdata;
                     continue;
                 }
