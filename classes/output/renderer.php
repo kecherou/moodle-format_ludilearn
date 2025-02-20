@@ -193,17 +193,17 @@ class renderer extends section_renderer {
                 $disruptorpercentage, $philanthropistpercentage);
 
             if ($max == $achieverpercentage) {
-                $data->hexadscores->achiever = $data->hexadscores->achiever + $diff;
+                $achieverpercentage = $data->hexadscores->achiever + $diff;
             } else if ($max == $playerpercentage) {
-                $data->hexadscores->player = $data->hexadscores->player + $diff;
+                $playerpercentage = $data->hexadscores->player + $diff;
             } else if ($max == $socialiserpercentage) {
-                $data->hexadscores->socialiser = $data->hexadscores->socialiser + $diff;
+                $socialiserpercentage = $data->hexadscores->socialiser + $diff;
             } else if ($max == $freespiritpercentage) {
-                $data->hexadscores->freespirit = $data->hexadscores->freespirit + $diff;
+                $freespiritpercentage = $data->hexadscores->freespirit + $diff;
             } else if ($max == $disruptorpercentage) {
-                $data->hexadscores->disruptor = $data->hexadscores->disruptor + $diff;
+                $disruptorpercentage = $data->hexadscores->disruptor + $diff;
             } else if ($max == $philanthropistpercentage) {
-                $data->hexadscores->philanthropist = $data->hexadscores->philanthropist + $diff;
+                $philanthropistpercentage = $data->hexadscores->philanthropist + $diff;
             }
         }
 
