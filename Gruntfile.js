@@ -32,12 +32,14 @@ module.exports = function(grunt) {
         // Configuration de la tâche "sass".
         sass: {
             options: {
-                implementation: require('sass-embedded'), // Utiliser "node-sass" comme implémentation Sass.
-                style: 'compressed' // Utiliser le style compressé pour minifier le CSS.
+                implementation: require('sass'), // Utiliser "node-sass" comme implémentation Sass.
+                outputStyle: 'compressed', // Utiliser le style compressé pour minifier le CSS.
+                sourceMap: true,
+                precision: 10
             },
             dist: {
                 files: {
-                    './styles.css': 'scss/**/*.scss' // Chemin du fichier CSS généré à partir des fichiers SCSS.
+                    './styles.css': 'scss/**/styles.scss' // Chemin du fichier CSS généré à partir des fichiers SCSS.
                 }
             }
         },
