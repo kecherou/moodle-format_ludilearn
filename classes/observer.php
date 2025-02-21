@@ -62,10 +62,12 @@ class format_ludilearn_observer {
      * @return void
      */
     public static function user_enrolment_created(user_enrolment_created $event): void {
+        global $CFG;
         if (is_enrolled(context_course::instance($event->courseid), $event->relateduserid)) {
             $manager = new manager();
             $course = get_course($event->courseid);
             if ($course->format == 'ludilearn') {
+                require_once($CFG->dirroot.'/course/lib.php');
                 $userid = $event->relateduserid;
                 $format = course_get_format($course);
                 // Get the format options.
@@ -88,11 +90,12 @@ class format_ludilearn_observer {
      * @throws dml_exception
      */
     public static function user_enrolment_updated(user_enrolment_updated $event): void {
-        global $DB;
+        global $DB, $CFG;
         if (is_enrolled(context_course::instance($event->courseid), $event->relateduserid)) {
             $manager = new manager();
             $course = get_course($event->courseid);
             if ($course->format == 'ludilearn') {
+                require_once($CFG->dirroot.'/course/lib.php');
                 $userid = $event->relateduserid;
                 $format = course_get_format($course);
                 // Get the format options.
@@ -115,6 +118,7 @@ class format_ludilearn_observer {
      * @throws dml_exception
      */
     public static function role_assigned(role_assigned $event): void {
+        global $CFG;
         // Only course level roles are interesting.
         if ($parentcontext = context::instance_by_id($event->contextid, IGNORE_MISSING)) {
             if ($parentcontext->contextlevel == CONTEXT_COURSE) {
@@ -122,6 +126,7 @@ class format_ludilearn_observer {
                     $manager = new manager();
                     $course = get_course($parentcontext->instanceid);
                     if ($course->format == 'ludilearn') {
+                        require_once($CFG->dirroot.'/course/lib.php');
                         $userid = $event->relateduserid;
                         $format = course_get_format($course);
 
@@ -149,7 +154,7 @@ class format_ludilearn_observer {
      * @throws moodle_exception
      */
     public static function section_created(course_section_created $event): void {
-        global $DB;
+        global $DB, $CFG;
         $manager = new manager();
         $course = $DB->get_record('course', ['id' => $event->courseid]);
 
@@ -158,7 +163,7 @@ class format_ludilearn_observer {
         if (self::is_restoring($event->courseid)) {
             return;
         }
-
+        require_once($CFG->dirroot.'/course/lib.php');
         $format = course_get_format($course);
         // Get the format options.
         $options = $format->get_format_options();
