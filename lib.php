@@ -57,6 +57,20 @@ class format_ludilearn extends core_courseformat\base {
      * @return bool true if this course format uses course index.
      */
     public function uses_course_index(): bool {
+        global $DB, $USER;
+
+        // If we are on questionaire page we don't display the course index.
+        $context = context_course::instance($this->courseid);
+        $assignment = $this->get_format_options()['assignment'];
+        if ($assignment == 'automatic') {
+            $profile = $DB->get_record('format_ludilearn_profile', ['userid' => $USER->id]);
+            if (!$profile) {
+                // Verify if the user is a teacher or a manager.
+                if (!has_capability('moodle/course:viewhiddenactivities', $context)) {
+                    return false;
+                }
+            }
+        }
         return true;
     }
 
