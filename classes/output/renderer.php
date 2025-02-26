@@ -156,6 +156,26 @@ class renderer extends section_renderer {
     public function render_gameprofile(int $courseid = 0): string {
         global $DB, $USER;
 
+        $data = $this->data_for_gameprofile($courseid);
+
+        $this->page->requires->js_call_amd('format_ludilearn/gameprofile', 'init',
+            ['hexadscores' => $data->hexadscores]);
+        return $this->render_from_template(
+            'format_ludilearn/gameprofile',
+            $data
+        );
+    }
+
+    /**
+     * Prepare the data for the game profile renderer.
+     *
+     * @param int $courseid Course ID.
+     *
+     * @return stdClass The data object.
+     */
+    public function data_for_gameprofile(int $courseid = 0): stdClass {
+        global $DB, $USER;
+
         $hexadscores = hexad_scores::from_database($USER->id);
 
         $data = new stdClass();
@@ -172,11 +192,12 @@ class renderer extends section_renderer {
 
         // Calculate percentage of each hexad.
         $total = $data->hexadscores->achiever + $data->hexadscores->player + $data->hexadscores->socialiser +
-            $data->hexadscores->freespirit + $data->hexadscores->disruptor + $data->hexadscores->philanthropist;
+                $data->hexadscores->freespirit + $data->hexadscores->disruptor + $data->hexadscores->philanthropist;
         // Avoid division by zero.
         if ($total == 0) {
             $total = 1;
         }
+
         $achieverpercentage = intval($data->hexadscores->achiever * 100 / $total);
         $playerpercentage = intval($data->hexadscores->player * 100 / $total);
         $socialiserpercentage = intval($data->hexadscores->socialiser * 100 / $total);
@@ -184,30 +205,46 @@ class renderer extends section_renderer {
         $disruptorpercentage = intval($data->hexadscores->disruptor * 100 / $total);
         $philanthropistpercentage = intval($data->hexadscores->philanthropist * 100 / $total);
         $totalpercentage = $achieverpercentage + $playerpercentage + $socialiserpercentage + $freespiritpercentage +
-            $disruptorpercentage + $philanthropistpercentage;
+                $disruptorpercentage + $philanthropistpercentage;
 
         // If the total percentage is not 100 (because of intval), we need to adjust the highest percentage to make it 100.
+
         if ($totalpercentage != 100) {
             $diff = 100 - $totalpercentage;
-            $max = max($achieverpercentage, $playerpercentage, $socialiserpercentage, $freespiritpercentage,
-                $disruptorpercentage, $philanthropistpercentage);
 
-            if ($max == $achieverpercentage) {
-                $achieverpercentage += $diff;
-            } else if ($max == $playerpercentage) {
-                $playerpercentage += $diff;
-            } else if ($max == $socialiserpercentage) {
-                $socialiserpercentage += $diff;
-            } else if ($max == $freespiritpercentage) {
-                $freespiritpercentage += $diff;
-            } else if ($max == $disruptorpercentage) {
-                $disruptorpercentage += $diff;
-            } else if ($max == $philanthropistpercentage) {
-                $philanthropistpercentage += $diff;
+            while ($diff > 0) {
+                $max = max($achieverpercentage, $playerpercentage, $socialiserpercentage, $freespiritpercentage,
+                        $disruptorpercentage, $philanthropistpercentage);
+
+                if ($max == $achieverpercentage) {
+                    $achieverpercentage += 1;
+                    $diff--;
+                }
+                if ($max == $playerpercentage && $diff > 0) {
+                    $playerpercentage += 1;
+                    $diff--;
+                }
+                if ($max == $socialiserpercentage && $diff > 0) {
+                    $socialiserpercentage += 1;
+                    $diff--;
+                }
+                if ($max == $freespiritpercentage && $diff > 0) {
+                    $freespiritpercentage += 1;
+                    $diff--;
+                }
+                if ($max == $disruptorpercentage && $diff > 0) {
+                    $disruptorpercentage += 1;
+                    $diff--;
+                }
+                if ($max == $philanthropistpercentage && $diff > 0) {
+                    $philanthropistpercentage += 1;
+                    $diff--;
+                }
             }
         }
 
         // Insert the percentage in the data object.
+        $data->hexadscores->totalpercentage = $totalpercentage . '%';
         $data->hexadscores->achieverpercentage = $achieverpercentage . '%';
         $data->hexadscores->playerpercentage = $playerpercentage . '%';
         $data->hexadscores->socialiserpercentage = $socialiserpercentage . '%';
@@ -215,11 +252,6 @@ class renderer extends section_renderer {
         $data->hexadscores->disruptorpercentage = $disruptorpercentage . '%';
         $data->hexadscores->philanthropistpercentage = $philanthropistpercentage . '%';
 
-        $this->page->requires->js_call_amd('format_ludilearn/gameprofile', 'init',
-            ['hexadscores' => $data->hexadscores]);
-        return $this->render_from_template(
-            'format_ludilearn/gameprofile',
-            $data
-        );
+        return $data;
     }
 }
