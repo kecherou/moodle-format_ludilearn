@@ -61,19 +61,22 @@ class get_report extends external_api {
         self::validate_context($context);
         $course = $DB->get_record('course', ['id' => $courseid], '*', MUST_EXIST);
         $users = [];
-
+        $params = [
+                'courseid' => $courseid,
+                'sort' => $sort,
+        ];
         $sql = "SELECT u.id, u.firstname, u.lastname, u.username
                     FROM {user} u INNER JOIN {user_enrolments} ue ON u.id = ue.userid
                     INNER JOIN {enrol} e ON ue.enrolid = e.id
                     WHERE e.courseid = :courseid";
         if (!empty($contain)) {
-            $sql .= " AND (lastname LIKE '%$contain%' OR firstname LIKE '%$contain%' OR username LIKE '%$contain%')";
+            $lastnamelikecontain = $DB->sql_like('lastname', ':contain');
+            $firstnamelikecontain = $DB->sql_like('firstname', ':contain');
+            $usernamelikecontain = $DB->sql_like('username', ':contain');
+            $sql .= " AND ({${$lastnamelikecontain}} OR {${$firstnamelikecontain}} OR {${$usernamelikecontain}}')";
+            $params['contain'] = '%' . $contain . '%';
         }
         $sql .= " ORDER BY :sort";
-        $params = [
-            'courseid' => $courseid,
-            'sort' => $sort,
-        ];
         $usersenrolled = $DB->get_records_sql($sql, $params, $offset, $limit);
         foreach ($usersenrolled as $userrenrolled) {
             $user = new stdClass();
