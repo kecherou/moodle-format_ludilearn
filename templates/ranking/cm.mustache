@@ -23,7 +23,7 @@
 
 <div class="cm-ranking {{#cm.parameters.restricted }}restricted{{/cm.parameters.restricted }}">
     {{#parameters.noscore}}
-        <img class="ludilearn-img img-responsive d-block mx-auto" src="{{globals.config.wwwroot}}/course/format/ludilearn/pix/{{ world }}/none.svg" alt="Image no score">
+        <img class="ludilearn-img img-responsive d-block mx-auto" src="{{config.wwwroot}}/course/format/ludilearn/pix/{{ world }}/none.svg" alt="Image no score">
     {{/parameters.noscore}}
     {{^parameters.noscore}}
         {{#parameters.gamified }}
@@ -41,7 +41,7 @@
             </p>
         {{/parameters.gamified }}
         {{^parameters.gamified }}
-            <img class="ludilearn-img img-responsive d-block mx-auto" src="{{globals.config.wwwroot}}/course/format/ludilearn/pix/{{ world }}/none.svg" alt="Image no score">
+            <img class="ludilearn-img img-responsive d-block mx-auto" src="{{config.wwwroot}}/course/format/ludilearn/pix/{{ world }}/none.svg" alt="Image no score">
         {{/parameters.gamified }}
     {{/parameters.noscore}}
 </div>
