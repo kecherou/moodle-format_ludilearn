@@ -25,7 +25,7 @@
     <div class="card-header">
         <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
             <li class="nav-item mr-1" role="presentation">
-                <a href="{{globals.config.wwwroot}}/course/view.php?id={{ course.id }}">
+                <a href="{{config.wwwroot}}/course/view.php?id={{ course.id }}">
                 <button class="btn btn-primary"
                         id="pills-settings-tab"
                         type="button"
@@ -77,7 +77,7 @@
             {{/cm}}
             {{# report}}
                 <li class="nav-item float-right" role="presentation">
-                    <a href="{{globals.config.wwwroot}}/course/format/ludilearn/report.php?id={{ course.id }}&hideheader=true">
+                    <a href="{{config.wwwroot}}/course/format/ludilearn/report.php?id={{ course.id }}&hideheader=true">
                     <button class="btn btn-primary"
                             id="pills-editgameeleements-tab"
                             type="button"
@@ -92,7 +92,7 @@
                 <div class="explanation-button">
                     <img
                          class="explanation"
-                         src="{{globals.config.wwwroot}}/course/format/ludilearn/pix/explanation-icon.svg"
+                         src="{{config.wwwroot}}/course/format/ludilearn/pix/explanation-icon.svg"
                          alt="Button reset user tour">
                 </div>
             </li>
