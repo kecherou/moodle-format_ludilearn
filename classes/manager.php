@@ -608,7 +608,7 @@ class manager {
                         IN ('complete', 'gaveup', 'gradedwrong', 'gradedright', 'gradedpartial')
                     LEFT JOIN {question_attempt_step_data} qasd ON qasd.attemptstepid = qas.id AND qasd.name = '-ludigrade'
                     WHERE za.id=:attemptid
-                    GROUP BY qa.id";
+                    GROUP BY qa.questionid, qas.state";
         $sqlresult = $DB->get_records_sql($query, ['attemptid' => $attemptid]);
 
         $result = [];
