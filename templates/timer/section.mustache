@@ -27,7 +27,7 @@
         {{#parameters.gamified}}
             <h4 class="text-center">{{ name }}</h4>
             <img class="img-responsive d-block mx-auto"
-                 src="{{globals.config.wwwroot}}/course/format/ludilearn/pix/{{ world }}/timer/default-timer.svg"
+                 src="{{config.wwwroot}}/course/format/ludilearn/pix/{{ world }}/timer/default-timer.svg"
                  alt="Image best reference time">
             <p class="text-center">
                 {{#str}} averagetime, format_ludilearn {{/str}}
@@ -39,7 +39,7 @@
             </div>
         {{/parameters.gamified}}
         {{^parameters.gamified}}
-            <img class="ludilearn-img img-responsive d-block mx-auto" src="{{globals.config.wwwroot}}/course/format/ludilearn/pix/{{ world }}/none.svg" alt="Image not gamified">
+            <img class="ludilearn-img img-responsive d-block mx-auto" src="{{config.wwwroot}}/course/format/ludilearn/pix/{{ world }}/none.svg" alt="Image not gamified">
         {{/parameters.gamified}}
             <div class="section-summary">
                 {{{ summary }}}
@@ -61,7 +61,7 @@
                                 <div class="{{#parameters.restricted }}restricted{{/parameters.restricted}} {{^url}} nourl {{/url}}">
                                     {{#parameters.gamified}}
                                         <img class="img-responsive d-block mx-auto"
-                                             src="{{globals.config.wwwroot}}/course/format/ludilearn/pix/{{ world }}/timer/icon.svg"
+                                             src="{{config.wwwroot}}/course/format/ludilearn/pix/{{ world }}/timer/icon.svg"
                                              alt="Image activity timer">
                                         {{#parameters.bestpenaltiescalc}}
                                             <div class="penalties">
@@ -71,7 +71,7 @@
                                         {{/parameters.bestpenaltiescalc}}
                                     {{/parameters.gamified}}
                                     {{^parameters.gamified}}
-                                        <img class="img-responsive d-block mx-auto" src="{{globals.config.wwwroot}}/course/format/ludilearn/pix/{{ world }}/none.svg" alt="Image not gamified">
+                                        <img class="img-responsive d-block mx-auto" src="{{config.wwwroot}}/course/format/ludilearn/pix/{{ world }}/none.svg" alt="Image not gamified">
                                     {{/parameters.gamified}}
                                     <div class="progression-text progression-cm">
                                         <p class="text-center">
