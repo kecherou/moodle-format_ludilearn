@@ -57,10 +57,19 @@ This program is distributed in the hope that it will be useful, but WITHOUT ANY 
 
 You should have received a copy of the GNU General Public License along with this program. If not, see <https://www.gnu.org/licenses/>.
 
-About Pimenko
+
+Adaptation algorithm and scientific expertise
 ===================
 
-Pimenko is a leading company specializing in Moodle development and e-learning solutions. With a team of experienced developers and e-learning experts, we are committed to creating innovative and high-quality plugins that enhance the Moodle experience for educators and learners alike.
+LudiLearn integrates an adaptation algorithm developed by the SICAL team of the LIRIS laboratory. This algorithm is based on data collected during experiments carried out with middle-school students from the educational institution of Lyon (France). The laboratory also contributed its expertise to the design of the game elements.
+
+**Scientific contact**: Pr. Élise Lavoué (elise.lavoue@univ-lyon3.fr)
+**Publications available at the LudiMoodle+ project website**: [https://ludimoodle.universite-lyon.fr](https://ludimoodle.universite-lyon.fr)
+
+
+About Pimenko
+===================
+Pimenko is a leading company and official Moodle Partner specialising in the development and creation of e-learning solutions. With a team of experienced developers and e-learning experts, we are committed to creating innovative, high-quality plugins that enhance the Moodle experience for educators and learners.
 
 ### Our Expertise
 
@@ -70,6 +79,7 @@ Pimenko is a leading company specializing in Moodle development and e-learning s
 - Moodle theme development
 - Learning analytics solutions
 - Course creation (elearning, LMS and MOOC)
+- Video production
 
 ### Connect with Us
 
@@ -81,4 +91,3 @@ Pimenko is a leading company specializing in Moodle development and e-learning s
 We are passionate about improving e-learning experiences through technology. If you have any questions about our services or need custom Moodle solutions, don't hesitate to reach out!
 
 @copyright Pimenko https://www.pimenko.com
-
