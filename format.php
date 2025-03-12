@@ -77,7 +77,7 @@ if ($questionaire) {
         course_create_sections_if_missing($course, 0);
 
         if (!empty($displaysection)) {
-            $format->set_sectionnum($displaysection);
+            $format->set_section_number($displaysection);
         }
 
         // Check if edition mode is enabled.
