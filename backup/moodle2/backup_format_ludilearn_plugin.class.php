@@ -82,7 +82,7 @@ class backup_format_ludilearn_plugin extends backup_format_plugin {
         $bysection->set_source_sql('
             SELECT b.* FROM {format_ludilearn_bysection} b
             JOIN {format_ludilearn_elements} e ON e.id = b.gameelementid
-            WHERE ecourseid = :courseid AND esectionid = :sectionid',
+            WHERE e.courseid = :courseid AND e.sectionid = :sectionid',
             ['courseid' => backup::VAR_COURSEID, 'sectionid' => backup::VAR_SECTIONID]
         );
 
