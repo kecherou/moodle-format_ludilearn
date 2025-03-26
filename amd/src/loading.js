@@ -17,16 +17,17 @@
  * Rendering loading.
  *
  * @module     format_ludilearn/loading
- * @package
  * @copyright  2025 Pimenko <contact@pimenko.com>
  * @author     Jordan Kesraoui
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define(['jquery', 'core/ajax', 'core/templates'],
-    ($, Ajax, Templates) => {
+define(['jquery', 'core/ajax', 'core/templates', 'core/notification'],
+    ($, Ajax, Templates, Notification) => {
 
         /**
          * Loading Oject using for rendering.
+         *
+         * @param {string} parentelementid The id of the parent element.
          */
         function Loading(parentelementid) {
             this.parentelementid = parentelementid;
@@ -44,10 +45,8 @@ define(['jquery', 'core/ajax', 'core/templates'],
                     // Add the element to the DOM.
                     let element = document.getElementById(that.parentelementid);
                     element.innerHTML = html;
-                }).fail((ex) => {
-                    console.error(ex);
-                }
-            );
+                    return null;
+                }).fail(Notification.exception);
         };
 
         /**
@@ -62,10 +61,8 @@ define(['jquery', 'core/ajax', 'core/templates'],
                     // Add the element to the DOM.
                     let element = document.getElementById(that.parentelementid);
                     element.innerHTML = html;
-                }).fail((ex) => {
-                    console.error(ex);
-                }
-            );
+                    return null;
+                }).fail(Notification.exception);
         };
 
         return {

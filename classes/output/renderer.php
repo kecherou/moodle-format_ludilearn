@@ -117,7 +117,7 @@ class renderer extends section_renderer {
         $urlgameprofile->param('hideheader', 1);
         $urlgameprofile = new moodle_url($urlgameprofile->out(false), $urlgameprofile->params());
         $this->page->requires->js_call_amd('format_ludilearn/questionnaire', 'init',
-            ['courseid' => $courseid,
+            [
                 'questionscount' => $data->questionscount,
                 'urlgameprofile' => $urlgameprofile->out(false),
             ]
