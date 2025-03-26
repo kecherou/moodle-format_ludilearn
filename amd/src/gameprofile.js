@@ -17,12 +17,12 @@
  * Game profile.
  *
  * @module      format_ludilearn/gameprofile
- * @package     format_ludilearn
  * @copyright   2025 Pimenko <support@pimenko.com><pimenko.com>
  * @author      Jordan Kesraoui
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define(['jquery', 'core/str', 'core/log', 'https://cdn.jsdelivr.net/npm/chart.js'], function($, str, log, Chart) {
+define(['jquery', 'core/str', 'core/log', 'https://cdn.jsdelivr.net/npm/chart.js', 'core/notification'],
+    function($, str, log, Chart, Notification) {
     return {
         init: function(hexadscores) {
             $(document).ready(function() {
@@ -50,7 +50,7 @@ define(['jquery', 'core/str', 'core/log', 'https://cdn.jsdelivr.net/npm/chart.js
                     });
 
                     const ctx = document.getElementById('hexadChart').getContext('2d');
-                    const hexadChart = new Chart(ctx, {
+                    new Chart(ctx, {
                         type: 'radar',
                         data: {
                             labels: labels,
@@ -113,8 +113,8 @@ define(['jquery', 'core/str', 'core/log', 'https://cdn.jsdelivr.net/npm/chart.js
                             }
                         }
                     });
-                }).fail(function() {
-                    log.error('Failed to load strings for hexad chart labels.');
+                }).fail(() => {
+                    Notification.exception(new Error('Failed to load strings for hexad chart labels.'));
                 });
             });
         }

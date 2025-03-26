@@ -17,16 +17,19 @@
  * Rendering pagination.
  *
  * @module     format_ludilearn/pagination
- * @package
  * @copyright  2025 Pimenko <contact@pimenko.com>
  * @author     Jordan Kesraoui
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define(['jquery', 'core/ajax', 'core/templates'],
-    ($, Ajax, Templates) => {
+define(['jquery', 'core/ajax', 'core/templates', 'core/notification'],
+    ($, Ajax, Templates, Notification) => {
 
         /**
-         * Pagination Oject using for rendering.
+         * Pagination object.
+         *
+         * @param {string} elementid Element id to load the pagination.
+         * @param {int} pagination Number of pages.
+         * @constructor
          */
         function Pagination(elementid, pagination) {
             this.elementid = elementid;
@@ -37,8 +40,11 @@ define(['jquery', 'core/ajax', 'core/templates'],
         }
 
         /**
-         * Load the pagination element.
-         */
+          * Load the pagination element.
+          *
+          * @param {function} loadData The callback function to load data.
+          * @param {object} params The parameters for the callback function.
+          */
         Pagination.prototype.load = function(loadData, params) {
             let that = this;
 
@@ -71,12 +77,17 @@ define(['jquery', 'core/ajax', 'core/templates'],
 
                     // Load events of pagination.
                     that.chargeEventsPagination(loadData, params);
-                }).fail((ex) => {
-                    console.error(ex);
-                }
-            );
+                    return null;
+                }).fail(Notification.exception);
         };
 
+        /**
+         * Change the current page.
+         *
+         * @param {int} page Number of the page.
+         * @param {function} loadData The callback function to load data.
+         * @param {object} params The parameters for the callback function.
+         */
         Pagination.prototype.changeCurrentPage = function(page, loadData, params) {
             if (page !== this.currentpage && page <= this.pagination && page > 0) {
                 this.currentpage = page;
@@ -89,6 +100,12 @@ define(['jquery', 'core/ajax', 'core/templates'],
             loadData(params);
         };
 
+        /**
+         * Charge the events of pagination.
+         *
+         * @param {function} loadData The callback function to load data.
+         * @param {object} params The parameters for the callback function.
+         */
         Pagination.prototype.chargeEventsPagination = function(loadData, params) {
             let that = this;
 

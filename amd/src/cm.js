@@ -23,9 +23,8 @@
 
 define(['core_courseformat/local/courseeditor/dndcmitem',
     'core_courseformat/courseeditor',
-    'core/templates',
-    'core/str'],
-    function(DndCmItem, CourseEditor, Templates, Str) {
+    'core/templates'],
+    function(DndCmItem, CourseEditor, Templates) {
     class GamifyCm extends DndCmItem {
         /**
          * Constructor hook.

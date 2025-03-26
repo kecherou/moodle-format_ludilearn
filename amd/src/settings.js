@@ -17,17 +17,19 @@
  * Settongs.
  *
  * @module      format_ludilearn/settings
- * @package     format_ludilearn
  * @copyright   2025 Pimenko <support@pimenko.com><pimenko.com>
  * @author      Jordan Kesraoui
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define(['jquery', 'core/ajax', 'core/templates', 'core/str'],
-    ($, Ajax) => {
+define(['jquery', 'core/ajax', 'core/notification'],
+    ($, Ajax, Notification) => {
         let COURSE_ID = 0;
         let TYPE = '';
         let PARAMETERSLIST = [];
 
+        /**
+         * Submit the form.
+         */
         let submit = () => {
             $('#form-parameters').on('submit', (event) => {
                 // Cancel event to customise it.
@@ -67,14 +69,13 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/str'],
                     Ajax.call([{
                         methodname: 'format_ludilearn_update_' + TYPE + '_parameters',
                         args: data
-                    }], true, true)[0].done((response) => {
+                    }], true, true)[0].done(() => {
                         $('.editsettingssuccess').show();
                     }).fail((ex) => {
                         $('.editsettingsfailed').show();
-                        console.error(ex);
+                        Notification.exception(ex);
                     });
                 }
-
             });
         };
 

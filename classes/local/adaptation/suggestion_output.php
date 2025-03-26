@@ -32,13 +32,13 @@ class suggestion_output {
     /**
      * Generate a suggestion based on affinities.
      *
-     * @param int $userid          The user for whom the suggestion is generated.
-     * @param int | null $courseid The course for which the suggestion is generated. Default is null.
+     * @param int $userid The user for whom the suggestion is generated.
+     * @param int|null $courseid The course for which the suggestion is generated. Default is null.
      *
      * @return array An array containing the suggestion and sorted combined scores.
      * @throws \dml_exception
      */
-    public static function generate_suggestion_based_on_affinities(int $userid, $courseid = null): array {
+    public static function generate_suggestion_based_on_affinities(int $userid, ?int $courseid = null): array {
         global $DB;
 
         // Use static values.
