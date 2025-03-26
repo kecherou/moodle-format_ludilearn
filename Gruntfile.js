@@ -10,7 +10,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-/* jshint node: true, browser: false */
+/* jshint ignore:start */
 
 /**
  * Grunt for compile scss file.
@@ -41,6 +41,12 @@ module.exports = function(grunt) {
                 files: {
                     './styles.css': 'scss/**/styles.scss' // Chemin du fichier CSS généré à partir des fichiers SCSS.
                 }
+            }
+        },
+
+        prettier: {
+            files: {
+                src: ['./styles.css']
             }
         },
 
@@ -98,8 +104,11 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-sass');
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-watch');
+    grunt.loadNpmTasks('grunt-prettier');
 
     // Définir la tâche par défaut.
-    grunt.registerTask('default', ['sass']);
+    grunt.registerTask('default', ['sass', 'prettier']);
     grunt.registerTask('js', ['uglify', 'watch']);
+    grunt.registerTask('css', ['sass', 'prettier']);
 };
+/* jshint ignore:end */

@@ -60,11 +60,13 @@
         }
     }
 
-    .cmname, .sectionname {
+    .cmname,
+    .sectionname {
         color: black;
     }
 
-    .bonuscompletion, .penalties {
+    .bonuscompletion,
+    .penalties {
         position: absolute;
         top: 0;
         right: 0;
@@ -76,7 +78,8 @@
         box-shadow: 4px -4px orange;
         width: 50%;
 
-        &.bonuscompletion-cm, &.penalties-cm {
+        &.bonuscompletion-cm,
+        &.penalties-cm {
             position: relative;
             width: 100%;
             max-width: 200px;
@@ -84,13 +87,15 @@
             box-shadow: 4px 4px orange;
         }
 
-        span.bonuscompletion-value, span.penalties-value {
+        span.bonuscompletion-value,
+        span.penalties-value {
             display: block;
             text-align: center;
             font-size: 1em;
             line-height: 1em;
         }
-        span.bonuscompletion-str, span.penalties-str {
+        span.bonuscompletion-str,
+        span.penalties-str {
             /* width: 60%; */
             display: block;
             text-align: center;
@@ -214,19 +219,19 @@
         color: #ddd;
 
         &.badge-number-bronze {
-            color: #ffffff;
+            color: #fff;
             background: linear-gradient(135deg, #cd7f32, #eee, #cd7f32, #eee, #cd7f32);
             border: 1px solid #cd7f32;
             font-weight: 900;
         }
         &.badge-number-silver {
-            color: #ffffff;
+            color: #fff;
             background: linear-gradient(135deg, #c0c0c0, #eee, #c0c0c0, #eee, #c0c0c0);
             border: 1px solid #c0c0c0;
             font-weight: 900;
         }
         &.badge-number-gold {
-            color: #ffffff;
+            color: #fff;
             background: linear-gradient(135deg, #ffd700, #eee, #ffd700, #eee, #ffd700);
             border: 1px solid #ffd700;
             font-weight: 900;
@@ -411,7 +416,7 @@
         position: relative;
 
         .numerator {
-            color: #F7B53C;
+            color: #f7b53c;
             font-size: 48px;
             font-weight: bold;
             position: absolute;
@@ -419,12 +424,12 @@
             left: 0;
 
             &.two-digits {
-                left: -24px
+                left: -24px;
             }
         }
 
         .fraction {
-            color: #C9BEB6;
+            color: #c9beb6;
             font-size: 32px;
             position: absolute;
             left: 32px;
@@ -432,17 +437,13 @@
         }
 
         .denumerator {
-            color: #C9BEB6;
+            color: #c9beb6;
             font-size: 32px;
             font-weight: bold;
             position: absolute;
             bottom: 0;
             left: 43px;
         }
-    }
-
-    .ludilearn-world-professional {
-
     }
 
     .progression-text {
@@ -524,7 +525,8 @@
         width: 100%;
     }
     .ranking-table {
-        td, tr {
+        td,
+        tr {
             border-top: none;
         }
     }
@@ -638,16 +640,16 @@
                 left: -75px;
             }
             25% {
-                left: calc(-75px - 100%)
+                left: calc(-75px - 100%);
             }
             50% {
-                left: calc(-75px - 200%)
+                left: calc(-75px - 200%);
             }
             75% {
-                left: calc(-75px - 300%)
+                left: calc(-75px - 300%);
             }
             100% {
-                left: calc(-75px - 400%)
+                left: calc(-75px - 400%);
             }
         }
     }
@@ -694,7 +696,7 @@
         }
 
         // Disable animation for the rocket because not exist in highschool world.
-        .c100>span {
+        .c100 > span {
             line-height: 0;
         }
         .progression-bar-component.rocket {
@@ -729,7 +731,8 @@
     /* Largeur d'écran inférieure à 600px. */
     @media screen and (max-width: 600px) {
         table.ranking-table {
-            tr, td {
+            tr,
+            td {
                 padding-left: 0;
                 padding-right: 0;
             }
@@ -812,7 +815,7 @@
                 &:focus + .rating-label {
                     outline: 2px solid var(--primary);
                     outline-offset: 2px;
-                    box-shadow: 0 0 0 2px #ffffff, 0 0 0 4px var(--primary);
+                    box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--primary);
                 }
 
                 &:focus:not(:focus-visible) + .rating-label {
@@ -822,7 +825,7 @@
 
                 &:checked + .rating-label {
                     background-color: var(--primary);
-                    color: #ffffff;
+                    color: #fff;
                     border-color: var(--primary);
                 }
             }
@@ -849,7 +852,7 @@
                 &:focus-visible {
                     outline: 2px solid var(--primary);
                     outline-offset: 2px;
-                    box-shadow: 0 0 0 2px #ffffff, 0 0 0 4px var(--primary);
+                    box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--primary);
                 }
             }
         }
@@ -904,7 +907,7 @@
         }
 
         .score-item {
-            background-color: #ffffff;
+            background-color: #fff;
             padding: 1.25rem;
             border-radius: 0.5rem;
             border: 1px solid #e9ecef;

@@ -22,12 +22,14 @@
  * @author      Jordan Kesraoui
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define(['jquery', 'core/ajax', 'core/str'],
-    ($, Ajax, Str) => {
-        let COURSE_ID = 0;
+define(['jquery', 'core/ajax', 'core/str', "core/notification"],
+    ($, Ajax, Str, Notification) => {
         let QUESTIONS_COUNT = 0;
         let URL_GAME_PROFILE = '';
 
+        /**
+         * Submit the form.
+         */
         let submit = () => {
             $('#form-questionnaire').on('submit', (event) => {
                 // Cancel event to customise it.
@@ -52,11 +54,9 @@ define(['jquery', 'core/ajax', 'core/str'],
                     Ajax.call([{
                         methodname: 'format_ludilearn_submit_questionnaire',
                         args: data
-                    }], true, true)[0].done((response) => {
+                    }], true, true)[0].done(() => {
                         window.location.href = URL_GAME_PROFILE;
-                    }).fail((ex) => {
-                        console.error(ex);
-                    });
+                    }).fail(Notification.exception);
                 } else {
                     $('.invalid-feedback').html('');
                     let message = '';
@@ -68,14 +68,14 @@ define(['jquery', 'core/ajax', 'core/str'],
                         document.querySelector('#id_error_' + answersmissing).scrollIntoView({
                             behavior: 'smooth'
                         });
-                    });
+                        return null;
+                    }).fail(Notification.exception);
                 }
             });
         };
 
         return {
-            init: (courseid, questionscounts, urlgameprofile) => {
-                COURSE_ID = courseid;
+            init: (questionscounts, urlgameprofile) => {
                 QUESTIONS_COUNT = questionscounts;
                 URL_GAME_PROFILE = urlgameprofile;
                 submit();

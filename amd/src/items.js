@@ -17,20 +17,24 @@
  * Settongs.
  *
  * @module      format_ludilearn/settings
- * @package     format_ludilearn
  * @copyright   2025 Pimenko <support@pimenko.com><pimenko.com>
  * @author      Jordan Kesraoui
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define(['jquery', 'core/ajax', 'core/templates', 'core/str', 'core/modal_factory', 'core/modal_events'],
-    ($, Ajax, Templates, Str, ModalFactory, ModalEvents) => {
+define(['jquery', 'core/ajax', 'core/templates', 'core/str', 'core/modal_factory', 'core/modal_events', 'core/notification'],
+    ($, Ajax, Templates, Str, ModalFactory, ModalEvents, Notification) => {
         let COURSE_ID = 0;
         let SECTION_ID = 0;
         let INVENTORY = [];
         let URL_IMG = '';
 
-        // Set item equiped.
-        let set_item_equiped = (slot, theme) => {
+        /**
+         * Set item equiped.
+         *
+         * @param {int} slot Slot.
+         * @param {int} theme Theme.
+         */
+        let setItemEquiped = (slot, theme) => {
             Ajax.call([{
                 methodname: 'format_ludilearn_set_item_equiped',
                 args: {
@@ -41,7 +45,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/str', 'core/modal_factory
             }], true, true)[0].done((response) => {
                 if (response.success) {
                     refreshInventory(slot, theme);
-                    let slotElement =  $('.avatar-slot.slot-' + slot);
+                    let slotElement = $('.avatar-slot.slot-' + slot);
                     if (theme !== 0) {
                         slotElement.attr('src', URL_IMG + 'image-0' + slot + '-' + theme + '.svg');
                         slotElement.addClass('item-equiped');
@@ -50,12 +54,15 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/str', 'core/modal_factory
                         slotElement.removeClass('item-equiped');
                     }
                 }
-            }).fail((ex) => {
-                console.error(ex);
-            });
+            }).fail(Notification.exception);
         };
 
-        // Refresh inventory.
+        /**
+         * Refresh inventory.
+         *
+         * @param {int} slot Slot.
+         * @param {int} theme Theme.
+         */
         let refreshInventory = (slot, theme) => {
             INVENTORY.forEach((slots, index) => {
                 if (slots.theme === slot) {
@@ -70,8 +77,10 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/str', 'core/modal_factory
             });
         };
 
-        // Get inventory.
-        let get_inventory = () => {
+        /**
+         * Get inventory.
+         */
+        let getInventory = () => {
             Ajax.call([{
                 methodname: 'format_ludilearn_get_inventory',
                 args: {
@@ -81,22 +90,25 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/str', 'core/modal_factory
             }], true, true)[0].done((response) => {
                 INVENTORY = response.inventory;
                 openBag();
-            }).fail((ex) => {
-                console.error(ex);
-            });
+            }).fail(Notification.exception);
         };
 
-        // Event when open bag.
+        /**
+         * Open bag event.
+         */
         let openBag = () => {
-            $('.avatar-bag-close').on('click', (event) => {
+            $('.avatar-bag-close').on('click', () => {
                 $('.avatar-bag-close').hide();
                 $('.avatar-bag-open').attr('style', 'display: block;');
-
                 createModal();
             });
         };
 
-        // Creation of the Modal displaying inventory.
+        /**
+         * Create modal.
+         *
+         * @returns {Promise<void>}
+         */
         let createModal = async() => {
             const bodyContent = await Templates.render('format_ludilearn/avatar/items', {inventory: INVENTORY});
             const modal = await ModalFactory.create({
@@ -106,7 +118,6 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/str', 'core/modal_factory
             });
             modal.show();
             const $root = await modal.getRoot();
-            const root = $root[0];
             $root.on(ModalEvents.shown, () => {
                 openTab(1);
                 selectItem();
@@ -119,6 +130,9 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/str', 'core/modal_factory
             });
         };
 
+        /**
+         * Select item event.
+         */
         let selectItem = () => {
             $('.avatar-item-owned').on('click', (event) => {
                 let slot = $(event.currentTarget).data('slot');
@@ -133,7 +147,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/str', 'core/modal_factory
                 }
 
                 equipButton.on('click').on('click', function() {
-                    set_item_equiped(slot, theme);
+                    setItemEquiped(slot, theme);
                     $('.avatar-item-equiped').removeClass('avatar-item-equiped');
                     $(event.currentTarget).addClass('avatar-item-equiped');
                     equipButton.hide();
@@ -141,6 +155,11 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/str', 'core/modal_factory
             });
         };
 
+        /**
+         * Open tab event.
+         *
+         * @param {int} slot Slot.
+         */
         let openTab = (slot) => {
             let tabInventory = $('.tab-inventory');
             if (slot !== null) {
@@ -165,7 +184,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/str', 'core/modal_factory
                 COURSE_ID = courseid;
                 SECTION_ID = sectionid;
                 URL_IMG = urlimages;
-                get_inventory();
+                getInventory();
             }
         };
     });
