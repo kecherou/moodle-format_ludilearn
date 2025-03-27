@@ -206,7 +206,7 @@ class manager {
      * @return array Array of game elements with auto assignements.
      * @throws \dml_exception
      */
-    public function get_gameelements_auto(string $type, $courseid = null): array {
+    public function get_gameelements_auto(string $type, ?int $courseid = null): array {
         global $DB;
 
         $gameelements = [];
@@ -481,8 +481,8 @@ class manager {
     /**
      * Calculate the best grade of a quiz.
      *
-     * @param $quiz     object Quiz.
-     * @param $attempts array Attempts.
+     * @param object $quiz Quiz.
+     * @param array $attempts Attempts.
      *
      * @return float Best grade of the quiz.
      */
@@ -522,8 +522,8 @@ class manager {
     /**
      * Calculate the grade of a quiz.
      *
-     * @param $quiz   object Quiz.
-     * @param $userid int User ID.
+     * @param object $quiz Quiz.
+     * @param int $userid User ID.
      *
      * @return float Grade of the quiz.
      * @throws \dml_exception
