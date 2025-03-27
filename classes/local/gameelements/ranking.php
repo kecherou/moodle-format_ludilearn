@@ -228,7 +228,6 @@ class ranking extends game_element {
      * @param stdClass $coursemodule The course module.
      * @param string $modulename     The module name.
      * @param int $userid            The user id.
-     * @param int $attemptid         The attempt id.
      *
      * @throws \dml_exception
      */

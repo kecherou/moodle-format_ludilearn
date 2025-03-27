@@ -135,6 +135,7 @@ final class score_test extends \advanced_testcase {
      * @param int $courseid The course id.
      * @param int $sectionid The section id.
      * @param int $userid The user id.
+     * @param array $cmsids The cm ids.
      *
      * @return array|null The constructor arguments.
      */

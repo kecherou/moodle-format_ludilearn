@@ -391,6 +391,7 @@ class avatar extends game_element {
     /**
      * Get empty items.
      *
+     * @param string $world World of the avatar.
      * @return array Empty items.
      */
     public static function get_empty_items(string $world): array {
