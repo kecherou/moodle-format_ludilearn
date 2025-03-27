@@ -17,13 +17,12 @@
  * Settongs.
  *
  * @module      format_ludilearn/settings
- * @package     format_ludilearn
  * @copyright   2025 Pimenko <support@pimenko.com><pimenko.com>
  * @author      Jordan Kesraoui
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define(['jquery', 'core/ajax', 'core/templates', 'core/str'],
-    ($, Ajax) => {
+define(['jquery'],
+    ($) => {
 
         return {
             init: (timestart) => {

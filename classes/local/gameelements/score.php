@@ -524,6 +524,7 @@ class score extends game_element {
      * @param int $courseid        The course ID.
      * @param int $multiplier      The multiplier value.
      * @param int $bonuscompletion The bonus completion value.
+     * @param int $percentagecompletion The percentage completion value.
      *
      * @return bool Returns true if the course parameters were successfully updated, false otherwise.
      * @throws \dml_exception

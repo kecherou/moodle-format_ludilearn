@@ -17,15 +17,28 @@
  * Show the report.
  *
  * @module     format_ludilearn/report
- * @package
  * @copyright  2025 Pimenko <contact@pimenko.com>
  * @author     Jordan Kesraoui
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define(['jquery', 'core/ajax', 'core/templates', 'format_ludilearn/pagination', 'format_ludilearn/loading'],
-    ($, Ajax, Templates, Pagination, Loading) => {
+define(['jquery', 'core/ajax', 'core/templates', 'format_ludilearn/pagination', 'format_ludilearn/loading', 'core/notification'],
+    ($,
+     Ajax,
+     Templates,
+     Pagination,
+     Loading,
+     Notification) => {
         let COURSE_ID;
 
+        /**
+         * Load the report.
+         *
+         * @param {boolean} newtable If true, the table will be reloaded.
+         * @param {string} contain The string to search.
+         * @param {int} limit The number of elements to display.
+         * @param {int} offset The offset.
+         * @param {string} sort The sort.
+         */
         let loadReport = (newtable, contain, limit, offset, sort) => {
 
             // Prepare resquest.
@@ -68,20 +81,23 @@ define(['jquery', 'core/ajax', 'core/templates', 'format_ludilearn/pagination', 
                             params.contain = contain;
                             Pagination.load('pagination', pagination, callbackForPagination, params);
                         }
-                    }).fail((ex) => {
-                        console.error(ex);
-                    }
-                );
-            }).fail((ex) => {
-                console.error(ex);
-            });
+                        return null;
+                    }).fail(Notification.exception);
+            }).fail(Notification.exception);
         };
 
-        // Format callback function loading data for pagination.
+        /**
+         * Format callback function loading data for pagination.
+         *
+         * @param {object} params The parameters.
+         */
         let callbackForPagination = (params) => {
             loadReport(false, params.contain, params.limit, params.offset, params.sort);
         };
 
+        /**
+         * Search report.
+         */
         let searchReport = () => {
             $('#formSearchReport').on('submit', (event) => {
                 event.preventDefault();
