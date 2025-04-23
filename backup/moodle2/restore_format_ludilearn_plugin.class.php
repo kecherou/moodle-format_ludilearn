@@ -23,6 +23,9 @@
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use format_ludilearn\local\gameelements\game_element;
+use format_ludilearn\manager;
+
 /**
  * Specialised restore for Ludilearn course format.
  *
