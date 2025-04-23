@@ -82,4 +82,8 @@ $observers = [
         'eventname' => '\core\event\course_reset_ended',
         'callback' => 'format_ludilearn_observer::course_reset_ended',
     ],
+    [
+        'eventname' => '\core\event\course_restored',
+        'callback' => 'format_ludilearn_observer::course_restored',
+    ],
 ];

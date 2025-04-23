@@ -28,6 +28,7 @@ use core\event\course_module_created;
 use core\event\course_module_deleted;
 use core\event\course_module_updated;
 use core\event\course_reset_ended;
+use core\event\course_restored;
 use core\event\course_section_created;
 use core\event\course_section_deleted;
 use core\event\role_assigned;
@@ -535,6 +536,34 @@ class format_ludilearn_observer {
                 // Reset all game elements progression in this course.
                 game_element::reset_course($event->courseid);
             }
+        }
+    }
+
+    /**
+     * Triggered via \core\event\course_restored event.
+     *
+     * @param course_restored $event The event.
+     *
+     * @return void
+     * @throws dml_exception
+     */
+    public static function course_restored(course_restored $event): void {
+        global $DB, $CFG;
+
+        // If the course is restored, we need to update the game elements.
+        $course = $DB->get_record('course', ['id' => $event->objectid]);
+        if ($course->format == 'ludilearn') {
+            require_once($CFG->dirroot.'/course/lib.php');
+            $format = course_get_format($course);
+            $options = $format->get_format_options();
+            $manager = new manager();
+            game_element::create_all_for_course($course->id);
+
+            // Sync attribution for Ludilearn course format.
+            $manager->sync_user_attribution($course->id,
+                    $options['assignment'],
+                    $options['default_game_element'],
+                    true);
         }
     }
 
