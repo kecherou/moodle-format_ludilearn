@@ -21,7 +21,7 @@
     {}
 }}
 
-<div class="course-score">
+<div id="ludilearn-course-score-section-{{id}}" class="course-score" data-sectionid="{{id}}">
     <div class="row">
         <div class="col-12">
             <div class="{{#parameters.restricted }}restricted{{/parameters.restricted}} {{^url}} nourl {{/url}}">
@@ -44,7 +44,7 @@
                 <p class="text-center scoretext">
                     {{#parameters.lastaccess}}
                         {{^parameters.noscore}}
-                            <span class="playerscore">{{ parameters.score }}</span> / {{ parameters.maxscore }} pts
+                            <span class="playerscore" data-for="ludilearn-course-section-score" data-id="{{id}}">{{ parameters.score }}</span> / <span  data-for="ludilearn-course-section-maxscore" data-id="{{id}}">{{ parameters.maxscore }}</span> pts
                         {{/parameters.noscore}}
                     {{/parameters.lastaccess}}
                     <br>
@@ -62,3 +62,4 @@
         </div>
     </div>
 </div>
+{{> format_ludilearn/components/course }}

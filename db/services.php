@@ -89,4 +89,11 @@ $functions = [
         'ajax' => true,
         'loginrequired' => true,
     ],
+    'format_ludilearn_get_state' => [
+        'classname' => 'format_ludilearn\external\get_state',
+        'description' => 'Get state (course, section, cm).',
+        'type' => 'read',
+        'ajax' => true,
+        'loginrequired' => true,
+    ],
 ];
