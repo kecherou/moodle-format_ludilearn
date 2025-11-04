@@ -21,19 +21,19 @@
     {}
 }}
 
-<div class="cm-score {{#cm.parameters.restricted }}restricted{{/cm.parameters.restricted }}">
+<div id="ludilearn-score-cm" class="cm-score {{#cm.parameters.restricted }}restricted{{/cm.parameters.restricted }}">
 
     {{#parameters.gamified }}
-        <img class="ludilearn-img img-responsive d-block mx-auto" src="{{config.wwwroot}}/course/format/ludilearn/pix/{{ world }}/score/bag.svg" alt="Image score chest">
+        <img class="ludilearn-img ludilearn-img-bag img-responsive d-block mx-auto" src="{{config.wwwroot}}/course/format/ludilearn/pix/{{ world }}/score/bag.svg" alt="Image score chest">
         {{#parameters.bonuscompletion}}
         <div class="bonuscompletion bonuscompletion-cm">
-            <span class="bonuscompletion-value">+ {{ parameters.bonuscompletion }}</span>
+            <span class="bonuscompletion-value" data-for="ludilearn-cm-bonuscompletion" data-id="{{id}}">+ {{ parameters.bonuscompletion }}</span>
             <span class="bonuscompletion-str">{{#str}} settings:bonuscompletion, format_ludilearn {{/str}}</span>
         </div>
         {{/parameters.bonuscompletion}}
         {{^parameters.noscore}}
         <p class="text-center scoretext">
-            <span class="playerscore">{{ cm.parameters.score }}</span> / {{ cm.parameters.maxscore }} pts
+            <span class="playerscore" data-for="ludilearn-cm-score">{{ cm.parameters.score }}</span> / <span data-for="ludilearn-cm-score">{{ cm.parameters.maxscore }}</span> pts
         </p>
         {{/parameters.noscore}}
     {{/parameters.gamified }}
@@ -41,3 +41,4 @@
         <img class="ludilearn-img img-responsive d-block mx-auto" src="{{config.wwwroot}}/course/format/ludilearn/pix/{{ world }}/none.svg" alt="Image no score">
     {{/parameters.gamified }}
 </div>
+{{> format_ludilearn/components/cm }}
