@@ -21,13 +21,15 @@
  * @author     Jordan Kesraoui
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define(['jquery', 'core/ajax', 'core/templates', 'format_ludilearn/pagination', 'format_ludilearn/loading', 'core/notification'],
+define(['jquery', 'core/ajax', 'core/templates', 'format_ludilearn/pagination', 'format_ludilearn/loading', 'core/notification',
+        'core/inplace_editable'],
     ($,
      Ajax,
      Templates,
      Pagination,
      Loading,
-     Notification) => {
+     Notification,
+     InplaceEditable) => {
         let COURSE_ID;
 
         /**

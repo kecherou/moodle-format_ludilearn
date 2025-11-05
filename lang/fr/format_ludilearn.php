@@ -65,6 +65,7 @@ $string['default_game_element'] = 'Élément de jeu par défaut';
 $string['default_game_element_help'] = 'L\'élément de jeu par défaut est celui qui est appliqué à tous les apprenants et à toutes les sections du cours.';
 $string['lesson'] = 'Leçon';
 $string['editgameeleements'] = 'Paramétrer les éléments de jeu';
+$string['editgameeleement'] = 'Modifier l\'éléments de jeu';
 $string['gameelements'] = 'Éléments de jeu';
 $string['gameelement'] = 'Élément de jeu';
 $string['parameters'] = 'Paramètrage';
