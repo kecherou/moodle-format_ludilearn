@@ -90,7 +90,7 @@ class format_ludilearn_gameelement implements renderable, templatable {
         $this->assignment = $options['assignment'];
 
         // Get the global game element type for the course.
-        $gameelementtype = $manager->get_element_type($courseid);
+        $gameelementtype = $manager->get_element_type($courseid, $USER->id);
         if (!$gameelementtype) {
             $gameelementtype = $options['default_game_element'];
             $this->notanswered = true;

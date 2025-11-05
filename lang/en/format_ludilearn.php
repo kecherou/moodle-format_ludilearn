@@ -65,6 +65,7 @@ $string['default_game_element'] = 'Default game element';
 $string['default_game_element_help'] = 'Default game element is the game element that will be assigned to all sections';
 $string['lesson'] = 'Lesson';
 $string['editgameeleements'] = 'Edit game elements';
+$string['editgameeleement'] = 'Edit game element';
 $string['gameelements'] = 'Game elements';
 $string['gameelement'] = 'Game element';
 $string['parameters'] = 'Settings';

@@ -255,6 +255,34 @@ function xmldb_format_ludilearn_upgrade($oldversion = 0) {
         upgrade_plugin_savepoint(true, 2025011200, 'format', 'ludilearn');
     }
 
+    if ($oldversion < 2025110410) {
+        // Create table format_ludilearn_manual.
+        $dbman = $DB->get_manager();
+        $table = new xmldb_table('format_ludilearn_manual');
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null,
+            XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', null,
+                XMLDB_NOTNULL, null, null);
+        $table->add_field('courseid', XMLDB_TYPE_INTEGER, '10', null,
+            XMLDB_NOTNULL, null, null);
+        $table->add_field('type', XMLDB_TYPE_CHAR, '255', null,
+            XMLDB_NOTNULL, null, null);
+
+        // Adding keys to table format_ludilearn_manual.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+        $table->add_key('userid', XMLDB_KEY_FOREIGN, ['userid'], 'user', ['id']);
+        $table->add_key('courseid', XMLDB_KEY_FOREIGN, ['courseid'], 'course', ['id']);
+        // Create table.
+        try {
+            if (!$dbman->table_exists($table)) {
+                $dbman->create_table($table);
+            }
+        } catch (ddl_exception $e) {
+            return false;
+        }
+        upgrade_plugin_savepoint(true, 2025110410, 'format', 'ludilearn');
+    }
+
     purge_all_caches();
     return true;
 }

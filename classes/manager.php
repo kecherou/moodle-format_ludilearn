@@ -162,6 +162,11 @@ class manager {
         // For each user in the course, update the attribution of the game element.
         $users = get_enrolled_users($context);
         foreach ($users as $user) {
+            // Verify if the user has been attributed the game element manually.
+            if ($this->get_game_element_manually_assigned($courseid, $user->id)) {
+                continue;
+            }
+            // Attribute the game element to the user.
             $this->attribution_game_element($gameelementid, $user->id);
         }
     }
@@ -783,6 +788,11 @@ class manager {
 
             // Attribution of the game elements to the users.
             foreach ($users as $user) {
+                // Verify if the user has been attributed the game element manually.
+                if ($this->get_game_element_manually_assigned($courseid, $user->id)) {
+                    continue;
+                }
+
                 if ($assignment == 'manual' || $assignment == 'bysection') {
                     // Type of game element.
                     $type = $defaultgameelement;
@@ -824,6 +834,11 @@ class manager {
     public function sync_user_attribution_by_user(int $courseid, string $assignment, string $defaultgameelement,
                                                   int $userid): void {
         global $DB;
+
+        // Verify if the user has been attributed the game element manually.
+        if ($this->get_game_element_manually_assigned($courseid, $userid)) {
+            return;
+        }
 
         $sections = $DB->get_records('course_sections', ['course' => $courseid]);
         foreach ($sections as $section) {
@@ -1316,6 +1331,12 @@ class manager {
         if (is_enrolled(context_course::instance($courseid), $USER->id)) {
             $isenrolled = true;
         }
+        $typeassigedmanually = $this->get_game_element_manually_assigned($courseid, $USER->id);
+        // Verify if the user has been attributed the game element manually.
+        if ($typeassigedmanually) {
+             return game_element::get_element($courseid, $sectionid, $USER->id,
+                    $typeassigedmanually);
+        }
         if ($assignment != 'bysection' || !$isenrolled) {
             $gameelement = game_element::get_element($courseid, $sectionid, $USER->id,
                     $type);
@@ -1367,12 +1388,139 @@ class manager {
      * Get the element type for a course.
      *
      * @param int $courseid Course ID.
+     * @param int $userid   User ID.
      *
      * @return string|bool The element type or false.
      * @throws \dml_exception
      */
-    public function get_element_type(int $courseid): string|bool {
-        global $DB, $USER;
+    public function get_element_type(int $courseid, int $userid): string|bool {
+        global $DB;
+        $context = context_course::instance($courseid);
+        $manager = new manager();
+        $format = course_get_format($courseid);
+
+
+        // Verify if the game elements has been assigned manually to the user.
+        $gameelementtype = $this->get_game_element_manually_assigned($courseid, $userid);
+        if ($gameelementtype) {
+            return $gameelementtype;
+        }
+        // Get the format options.
+        $options = $format->get_format_options();
+
+        // Get the default game element.
+        $gameelementtype = $options['default_game_element'];
+        $assignment = $options['assignment'];
+        $notanswered = false;
+        // Verify if the cours is assigned automatically and if the user has answered yet to the questionnaire.
+        if ($assignment == 'automatic') {
+            $profile = $DB->get_record('format_ludilearn_profile', ['userid' => $userid]);
+            if ($profile) {
+                $gameelementtype = $profile->type;
+
+                // Verify if the user has attributions.
+                $manager->check_attribution_course($courseid, $userid, $gameelementtype);
+            } else {
+                $notanswered = true;
+            }
+        }
+
+        $isenrolled = false;
+        if (is_enrolled($context, $userid)) {
+            $isenrolled = true;
+        }
+
+        // If the user has capabilities to update the course and he is not enrolled or the course is assigned automatically.
+        if (has_capability('moodle/course:update', $context) && (($assignment == 'automatic') || !$isenrolled)) {
+            // Verify is there is an attribution for this user.
+            $attributionexist = $manager->has_attribution($courseid, $userid);
+            // If not attribution exist, create one with nogamified type.
+            $gameelementtype = 'nogamified';
+            if (!$attributionexist) {
+                $manager->check_attribution_course($courseid, $userid, $gameelementtype);
+            }
+            $notanswered = false;
+        }
+        if ($notanswered) {
+            return false;
+        }
+        return $gameelementtype;
+    }
+
+    /**
+     * Get if the game element is manually assigned for a user.
+     *
+     * @param int $courseid Course ID.
+     * @param int $userid   User ID.
+     *
+     * @return string|bool The element type or false.
+     * @throws \dml_exception
+     */
+    public function get_game_element_manually_assigned(int $courseid, int $userid): string|bool {
+        global $DB;
+
+        $gameelementtyperecord = $DB->get_record('format_ludilearn_manual', ['courseid' => $courseid, 'userid' => $userid]);
+        if ($gameelementtyperecord) {
+            return $gameelementtyperecord->type;
+        }
+        return false;
+    }
+
+    /**
+     * Assign a game element type manually to a user.
+     *
+     * @param int $courseid Course ID.
+     * @param int $userid   User ID.
+     * @param string $type  Game element type.
+     *
+     * @return void
+     * @throws \dml_exception
+     */
+    public function assign_game_element_manually(int $courseid, int $userid, string $type): void {
+        global $DB;
+
+        // Verify if an attribution already exist.
+        $gameelementtyperecord = $DB->get_record('format_ludilearn_manual', ['courseid' => $courseid, 'userid' => $userid]);
+        if ($gameelementtyperecord) {
+            if ($gameelementtyperecord->type != $type) {
+                // Update the type.
+                $gameelementtyperecord->type = $type;
+                $DB->update_record('format_ludilearn_manual', $gameelementtyperecord);
+            } else {
+                // No change.
+                return;
+            }
+        } else {
+            // Create a new record.
+            $newrecord = new stdClass();
+            $newrecord->courseid = $courseid;
+            $newrecord->userid = $userid;
+            $newrecord->type = $type;
+            $DB->insert_record('format_ludilearn_manual', $newrecord);
+        }
+
+        // Get all game elements of the course.
+        $gameelements = $DB->get_records('format_ludilearn_elements', ['courseid' => $courseid, 'type' => $type]);
+        foreach ($gameelements as $gameelement) {
+            $this->attribution_game_element($gameelement->id, $userid);
+        }
+    }
+
+    /**
+     * Remove the manual assignment of a game element type for a user.
+     *
+     * @param int $courseid Course ID.
+     * @param int $userid   User ID.
+     *
+     * @return void
+     * @throws \dml_exception
+     */
+    public function remove_game_element_manually_assignment(int $courseid, int $userid): void {
+        global $DB;
+
+        // Remove the manual assignment record.
+        $DB->delete_records('format_ludilearn_manual', ['courseid' => $courseid, 'userid' => $userid]);
+
         $context = context_course::instance($courseid);
         $manager = new manager();
         $format = course_get_format($courseid);
@@ -1383,40 +1531,9 @@ class manager {
         // Get the default game element.
         $gameelementtype = $options['default_game_element'];
         $assignment = $options['assignment'];
-        $notanswered = false;
-        // Verify if the cours is assigned automatically and if the user has answered yet to the questionnaire.
-        if ($assignment == 'automatic') {
-            $profile = $DB->get_record('format_ludilearn_profile', ['userid' => $USER->id]);
-            if ($profile) {
-                $gameelementtype = $profile->type;
 
-                // Verify if the user has attributions.
-                $manager->check_attribution_course($courseid, $USER->id, $gameelementtype);
-            } else {
-                $notanswered = true;
-            }
-        }
-
-        $isenrolled = false;
-        if (is_enrolled($context, $USER->id)) {
-            $isenrolled = true;
-        }
-
-        // If the user has capabilities to update the course and he is not enrolled or the course is assigned automatically.
-        if (has_capability('moodle/course:update', $context) && (($assignment == 'automatic') || !$isenrolled)) {
-            // Verify is there is an attribution for this user.
-            $attributionexist = $manager->has_attribution($courseid, $USER->id);
-            // If not attribution exist, create one with nogamified type.
-            $gameelementtype = 'nogamified';
-            if (!$attributionexist) {
-                $manager->check_attribution_course($courseid, $USER->id, $gameelementtype);
-            }
-            $notanswered = false;
-        }
-        if ($notanswered) {
-            return false;
-        }
-        return $gameelementtype;
+        // Change the attributions to the default game element.
+        $this->sync_user_attribution_by_user($courseid, $assignment, $gameelementtype, $userid);
     }
 
     /**
@@ -1428,14 +1545,14 @@ class manager {
      * @throws \dml_exception
      */
     public function get_course_state(int $courseid): string {
-        global $DB;
+        global $DB, $USER;
 
         $states = [];
         $course = get_course($courseid);
         $format = course_get_format($courseid);
 
         // Get the game element type for the course.
-        $gameelementtype = $this->get_element_type($courseid);
+        $gameelementtype = $this->get_element_type($courseid, $USER->id);
 
         if (!$gameelementtype) {
             return json_encode($states);
@@ -1642,7 +1759,7 @@ class manager {
      * @throws \dml_exception
      */
     public function get_state(string $resource, int $id): string {
-        global $DB;
+        global $DB, $USER;
 
         $states = [];
         switch ($resource) {
@@ -1662,7 +1779,7 @@ class manager {
                     return json_encode($states);
                 }
                 // Get the global game element type for the course.
-                $gameelementtype = $this->get_element_type($course->id);
+                $gameelementtype = $this->get_element_type($course->id, $USER->id);
 
                 // If the there is no game element type, it means the user has not game element assigned.
                 if (!$gameelementtype) {
@@ -1687,7 +1804,7 @@ class manager {
                 }
 
                 // Get the global game element type for the course.
-                $gameelementtype = $this->get_element_type($course->id);
+                $gameelementtype = $this->get_element_type($course->id, $USER->id);
 
                 // If the there is no game element type, it means the user has not game element assigned.
                 if (!$gameelementtype) {
