@@ -14,18 +14,24 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
+namespace format_ludilearn\output;
+
+use core_reportbuilder\external\filters\set;
+use format_ludilearn\local\gameelements\game_element;
+use moodle_url;
+use plugin_renderer_base;
+
 /**
- * Plugin version and other meta-data are defined here.
+ * Renderer for the Ludilearn editable.
  *
  * @package     format_ludilearn
  * @copyright   2025 Pimenko <support@pimenko.com><pimenko.com>
+ * @author      Jordan Kesraoui
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+class editable_renderer extends plugin_renderer_base {
 
-defined('MOODLE_INTERNAL') || die();
-
-$plugin->version = 2025110410;
-$plugin->component = 'format_ludilearn';
-$plugin->release = '1.0.2-Moodle4.4';
-$plugin->requires = 2022041900;
-$plugin->maturity = MATURITY_STABLE;
+    public function render_element_types_editable(element_types_editable $element): string {
+        return $this->render_from_template('core/inplace_editable', $element->export_for_template($this));
+    }
+}

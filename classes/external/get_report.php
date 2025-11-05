@@ -29,6 +29,8 @@ use external_single_structure;
 use external_value;
 use format_ludilearn\local\gameelements\game_element;
 use format_ludilearn\manager;
+use format_ludilearn\output\editable_renderer;
+use format_ludilearn\output\element_types_editable;
 use stdClass;
 
 /**
@@ -55,12 +57,13 @@ class get_report extends external_api {
      * @throws \dml_exception
      */
     public static function execute(int $courseid, string $contain, int $limit, int $offset, string $sort): array {
-        global $DB;
+        global $DB, $PAGE;
 
         $context = context_course::instance($courseid);
         self::validate_context($context);
         require_capability('format/ludilearn:manage', $context);
         $course = $DB->get_record('course', ['id' => $courseid], '*', MUST_EXIST);
+        $manager = new manager();
         $users = [];
         $params = [
                 'courseid' => $courseid,
@@ -87,12 +90,20 @@ class get_report extends external_api {
             $user->username = $userrenrolled->username;
             $user->firstname = $userrenrolled->firstname;
             $user->lastname = $userrenrolled->lastname;
-            $gameelements = game_element::get_all($courseid, $user->id);
-            $firstgameelement = reset($gameelements);
-            $user->gameelement = 'N/A';
-            if ($firstgameelement) {
-                $user->gameelement = get_string($firstgameelement->get_type(), 'format_ludilearn');
+
+            // Render element_types_editable.
+            $manuallyassigned = $manager->get_game_element_manually_assigned($courseid, $user->id);
+            if ($manuallyassigned) {
+                $type = $manuallyassigned;
+                $manuallyassigned = true;
+            } else {
+                $type = $manager->get_element_type($courseid, $userrenrolled->id);
             }
+            $elementtypeseditable = new element_types_editable($course, $user, $type, $manuallyassigned);
+            $renderer = new editable_renderer($PAGE, RENDERER_TARGET_AJAX);
+            $user->manuallyassigned = $manuallyassigned;
+            $user->gameelement = $renderer->render_element_types_editable($elementtypeseditable);
+
             $user->progression = \core_completion\progress::get_course_progress_percentage($course, $user->id);
             if ($user->progression) {
                 $user->progression = intval($user->progression) . '%';
@@ -185,8 +196,13 @@ class get_report extends external_api {
                             VALUE_REQUIRED
                         ),
                         'gameelement' => new external_value(
-                            PARAM_TEXT,
+                            PARAM_RAW,
                             'Game element',
+                            VALUE_REQUIRED
+                        ),
+                        'manuallyassigned' => new external_value(
+                            PARAM_BOOL,
+                            'Is manually assigned',
                             VALUE_REQUIRED
                         ),
                         'progression' => new external_value(
