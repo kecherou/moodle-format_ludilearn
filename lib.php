@@ -649,6 +649,9 @@ function format_ludilearn_inplace_editable($itemtype, $itemid, $newvalue) {
             [$itemid, 'ludilearn'], MUST_EXIST);
         return course_get_format($section->course)->inplace_editable_update_section_name($section, $itemtype, $newvalue);
     }
+    if ($itemtype === 'element_types') {
+        return format_ludilearn\output\element_types_editable::update($itemid, $newvalue);
+    }
 }
 
 /**
