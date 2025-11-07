@@ -26,7 +26,10 @@
         <td>{{ firstname }}</td>
         <td>{{ lastname }}</td>
         <td>{{ username }}</td>
-        <td>{{{ gameelement }}} {{#manuallyassigned}}(M){{/manuallyassigned}}</td>
+        <td>
+            {{{ gameelement }}}
+            {{#manuallyassigned}}<span class="badge badge-warning">{{#str}} manually_assigned, format_ludilearn {{/str}}</span>{{/manuallyassigned}}
+        </td>
         <td>{{ progression }}</td>
         <td>{{ lastaccess }}</td>
     </tr>
