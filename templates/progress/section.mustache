@@ -21,7 +21,7 @@
     {}
 }}
 
-<div class="section-progress">
+<div id="ludilearn-progress-section" class="section-progress">
     <div class="row">
         <div class="col-6 rightdottedscore">
             <h4 class="text-center">{{ name }}</h4>
@@ -31,7 +31,7 @@
                      src="{{config.wwwroot}}/course/format/ludilearn/pix/{{ world }}/progress/section-planet-0{{ parameters.planetenumber }}.svg"
                      alt="Planet of the section"
                      style="z-index: 0;">
-                <img class="progression-steps-component rocket "
+                <img data-for="ludilearn-section-img-planetstep" class="progression-steps-component rocket"
                      src="{{config.wwwroot}}/course/format/ludilearn/pix/{{ world }}/progress/progression-step-{{ parameters.step }}.svg"
                      alt="Image of progression step"
                      style="z-index: 2;">
@@ -57,11 +57,11 @@
             {{#parameters.gamified}}
             <div class="progression-text">
                 <p class="text-center">
-                    <span class="progression">{{ parameters.progression }}%</span>
+                    <span class="progression" data-for="ludilearn-section-progression">{{ parameters.progression }}%</span>
                 </p>
             </div>
             {{/parameters.gamified}}
-            <div class="section-summary">
+            <div data-for="ludilearn-section-summary" class="section-summary">
                 {{{ summary }}}
             </div>
         </div>
@@ -69,8 +69,8 @@
             <div class="row">
                 {{#cms}}
                     {{#label}}
-                        <div class="col-12 mt-2">
-                            <div class="cm-score">
+                        <div class="col-12 mt-2" id="ludilearn-section-cm-{{id}}">
+                            <div class="cm-score" data-for="ludilearn-section-cm-labeltext" data-id="{{id}}">
                                 {{{ labeltext }}}
                             </div>
                         </div>
@@ -78,7 +78,7 @@
                     {{^label}}
                         <div class="col-6 col-sm-4 col-md-4 col-lg-4">
                             <div class="cm-progress">
-                                <div class="{{#parameters.restricted }}restricted{{/parameters.restricted}} {{^url}} nourl {{/url}}">
+                                <div class="{{#parameters.restricted }}restricted{{/parameters.restricted}} {{^url}} nourl {{/url}}" data-for="ludilearn-section-cm" data-id="{{id}}">
                                     <img class="{{#parameters.restricted }}restricted{{/parameters.restricted }} img-responsive mb-1 d-block mx-auto"
                                          {{#parameters.gamified }}src="{{config.wwwroot}}/course/format/ludilearn/pix/{{ world }}/progress/icon.svg" {{/parameters.gamified }}
                                          {{^parameters.gamified }}src="{{config.wwwroot}}/course/format/ludilearn/pix/{{ world }}/none.svg" {{/parameters.gamified }}
@@ -86,12 +86,12 @@
                                     {{#parameters.gamified }}
                                     <div class="progression-text progression-cm">
                                         <p class="text-center">
-                                            <span class="progression">{{ parameters.progression }}%</span>
+                                            <span class="progression" data-for="ludilearn-section-cm-progression" data-id="{{id}}">{{ parameters.progression }}%</span>
                                         </p>
                                     </div>
                                     {{/parameters.gamified }}
                                     <p class="text-center">
-                                        <span class="cmname"><a href="{{ url }}" class="stretched-link">{{{ name }}}</a></span>
+                                        <span class="cmname"><a href="{{ url }}" class="stretched-link" data-for="ludilearn-section-cm-name" data-id="{{id}}">{{{ name }}}</a></span>
                                     </p>
                                     {{#parameters.restricted }}
                                         <div class="cmrestrictedinfo text-center small"><i class="fa fa-lock"></i> {{{ parameters.restrictedinfo }}}</div>
@@ -105,3 +105,4 @@
         </div>
     </div>
 </div>
+{{> format_ludilearn/components/section }}

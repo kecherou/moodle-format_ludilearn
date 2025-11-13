@@ -57,8 +57,6 @@ export default class extends BaseComponent {
     }
 
     getWatchers() {
-        let cmwatchers = [];
-
         return [
             {watch: 'currentsection.score:updated', handler: this._refreshScore},
             {watch: 'currentsection.maxscore:updated', handler: this._refreshMaxScore},
