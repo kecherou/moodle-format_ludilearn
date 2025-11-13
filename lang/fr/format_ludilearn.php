@@ -211,7 +211,7 @@ $string['settings:rankingdescription'] = '<p> L\'élément de jeu classement off
 2. Les activités avec uniquement de l\'achèvement n\'ont pas d\'impact sur le classement.<br>
 3. Dans le cas des activités combinant note et achèvement, uniquement la note est prise en compte pour le classement.</p>';
 $string['settings:nogamifieddescription'] = '<p>L\'élément de jeu non ludifié apparait sur toutes les activités et les ressources de cours sans ludification.</p>';
-$string['settings:updateprogression'] = 'Mettre à jour de la progression';
+$string['settings:updateprogression'] = 'Mettre à jour la progression';
 $string['settings:updateprogressiondescription'] = '<p>Cette option permet de mettre à jour manuellement la progression des apprenants dans le cours.<br>
 Cela peut être utile lorsque les éléments de jeu attribués sont modifiés car la progression n\'est pas mise à jour automatiquement.</p>';
 $string['gameprofile_title'] = 'Résultat du profil du joueur HEXAD-12';
@@ -234,7 +234,7 @@ $string['disruptor_desc'] = 'Motivé par le changement';
 $string['philanthropist_desc'] = 'Motivé par le sens et l\'utilité';
 $string['navigation'] = 'Navigation profil HEXAD-12';
 $string['backtocourse'] = 'Continuer';
-$string['partner_text'] = '<p>Développé par <a href="https://pimenko.com" target="_blank">Pimenko</a>.<br>
+$string['partner_text'] = '<p>Développé par <a href="https://pimenko.com" target="_blank">Pimenko</a>, en collaboration avec le laboratoire LIRIS<br>
 Pour les retours techniques, merci d\'utiliser le <a href="https://github.com/DigiDago/moodle-format_ludilearn" target="_blank">répertoire Github</a><br><br>
 <b>À propos de Ludilearn+</b><br><br>
 Le projet LudiMoodle+, porté par l\'Université de Lyon, bénéficie d\'une aide de l\'État gérée par l\'Agence nationale de la recherche au titre de France 2030 portant la référence « ANR-22-FRAN-0005 »</p>';

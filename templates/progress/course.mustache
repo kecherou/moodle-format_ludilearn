@@ -21,7 +21,7 @@
     {}
 }}
 
-<div class="course-progress">
+<div id="ludilearn-course-progress-section-{{id}}" class="course-progress" data-sectionid="{{id}}">
     <div class="row">
         <div class="col-12">
             <div class="{{#parameters.restricted }}restricted{{/parameters.restricted}} {{^url}} nourl {{/url}}">
@@ -31,11 +31,11 @@
                         {{#parameters.lastaccess}}
                             {{#parameters.gamified}}
                                 {{#parameters.completed}}
-                                    <img class="ludilearn-img img-responsive mb-1 d-block mx-auto progression-planet progression-planet-max"
+                                    <img data-for="ludilearn-course-section-img-planet" data-id="{{id}}" class="ludilearn-img img-responsive mb-1 d-block mx-auto progression-planet progression-planet-max"
                                          src="{{config.wwwroot}}/course/format/ludilearn/pix/{{ world }}/progress/course-planet-max-0{{ parameters.planetenumber }}.svg" alt="Image planet progress">
                                 {{/parameters.completed}}
                                 {{^parameters.completed}}
-                                    <img class="ludilearn-img img-responsive mb-1 d-block mx-auto progression-planet progression-planet-inprogress"
+                                    <img data-for="ludilearn-course-section-img-planet" data-id="{{id}}" class="ludilearn-img img-responsive mb-1 d-block mx-auto progression-planet progression-planet-inprogress"
                                          src="{{config.wwwroot}}/course/format/ludilearn/pix/{{ world }}/progress/course-planet-0{{ parameters.planetenumber }}.svg" alt="Image planet progress">
                                 {{/parameters.completed}}
                             {{/parameters.gamified}}
@@ -51,7 +51,7 @@
                         {{#parameters.gamified}}
                     <div class="col-3 block_section">
                         <p class="text-center">
-                            <span class="progression">{{ parameters.progression }}%</span>
+                            <span class="progression" data-for="ludilearn-course-section-progression" data-id="{{id}}">{{ parameters.progression }}%</span>
                         </p>
                     </div>
                         {{/parameters.gamified}}
@@ -72,3 +72,4 @@
         </div>
     </div>
 </div>
+{{> format_ludilearn/components/course }}
