@@ -21,11 +21,11 @@
     {}
 }}
 
-<div class="cm-process {{#cm.parameters.restricted }}restricted{{/cm.parameters.restricted }}">
+<div id="ludilearn-progress-cm" class="cm-process {{#cm.parameters.restricted }}restricted{{/cm.parameters.restricted }}">
 {{#parameters.gamified }}
     <div class="row mb-2">
         <div class="col-12">
-            <div class="circle-progression c100 biggest ludilearn p{{ parameters.progression }}">
+            <div data-for="ludilearn-cm-circleprogression" class="circle-progression c100 biggest ludilearn p{{ parameters.progression }}">
                 <span class="show">
                     <img class="progression-bar-component rocket" src="{{config.wwwroot}}/course/format/ludilearn/pix/{{ world }}/progress/mod-rocket-sprite.svg">
                 </span>
@@ -39,10 +39,11 @@
         <div class="col-12">
             <div class="progression-text">
                 <p class="text-center">
-                    <span class="progression">{{ parameters.progression }}%</span>
+                    <span class="progression" data-for="ludilearn-cm-progression">{{ parameters.progression }}%</span>
                 </p>
             </div>
         </div>
     </div>
 {{/parameters.gamified }}
 </div>
+{{> format_ludilearn/components/cm }}
