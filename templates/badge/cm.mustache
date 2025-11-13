@@ -21,18 +21,18 @@
     {}
 }}
 
-<div class="cm-badge {{#cm.parameters.restricted }}restricted{{/cm.parameters.restricted }}">
+<div id="ludilearn-badge-cm" class="cm-badge {{#cm.parameters.restricted }}restricted{{/cm.parameters.restricted }}">
     <div class="row">
 {{#parameters.gamified }}
         <div class="col-12">
             {{#parameters.completion}}
-                <div class="badgecompletion badgecompletion-cm">
+                <div data-for="ludilearn-cm-completion" class="badgecompletion badgecompletion-cm">
                     <img class="ludilearn-img img-responsive d-block mx-auto"
                          src="{{config.wwwroot}}/course/format/ludilearn/pix/{{ world }}/badge/badge_completion.svg"
                          alt="Image badge">
                 </div>
             {{/parameters.completion}}
-            <img class="ludilearn-img img-responsive d-block mx-auto"
+            <img data-for="ludilearn-cm-badge" class="ludilearn-img img-responsive d-block mx-auto"
                  src="{{config.wwwroot}}/course/format/ludilearn/pix/{{ world }}/badge/badge_{{ parameters.badge }}.svg"
                  alt="Image badge">
         </div>
@@ -41,5 +41,5 @@
 {{^parameters.gamified }}
     <img class="ludilearn-img img-responsive d-block mx-auto" src="{{config.wwwroot}}/course/format/ludilearn/pix/{{ world }}/none.svg" alt="Image no score">
 {{/parameters.gamified}}
-
 </div>
+{{> format_ludilearn/components/cm }}
