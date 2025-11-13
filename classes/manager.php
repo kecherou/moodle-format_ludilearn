@@ -1577,11 +1577,14 @@ class manager {
             $state->action = 'put';
             $state->name = 'sections';
             $state->fields = new stdClass();
+            $options = $format->get_format_options();
+            $state->fields->world = $options['world'];
 
             // Get the section parameters.
             foreach ($gameelement->get_parameters() as $keyparam => $valueparam) {
                 $state->fields->$keyparam = $valueparam;
             }
+            $section->gameelement = $gameelement;
             // Populate the section parameters with more specific data.
             $state->fields = $this->populate_section($course, $state->fields, $section, $gameelementtype);
             $state->fields->id = $section->id;
@@ -1602,6 +1605,7 @@ class manager {
      */
     public function get_course_section_state(stdClass $course, stdClass $section, game_element $gameelement) {
         global $DB;
+        $format = course_get_format($course->id);
 
         $states = [];
         // Prepare the state.
@@ -1609,11 +1613,14 @@ class manager {
         $state->action = 'put';
         $state->name = 'sections';
         $state->fields = new stdClass();
+        $options = $format->get_format_options();
+        $state->fields->world = $options['world'];
 
         // Get the section parameters.
         foreach ($gameelement->get_parameters() as $keyparam => $valueparam) {
             $state->fields->$keyparam = $valueparam;
         }
+        $section->gameelement = $gameelement;
         // Populate the section parameters with more specific data.
         $state->fields = $this->populate_section($course, $state->fields, $section, $gameelement->get_type());
         $state->fields->id = $section->id;
@@ -1636,18 +1643,22 @@ class manager {
         $states = [];
         $course = get_course($section->course);
         $contextcourse = context_course::instance($course->id);
+        $format = course_get_format($course->id);
 
         // Prepare the state.
         $state = new stdClass();
         $state->action = 'put';
         $state->name = 'currentsection';
         $state->fields = new stdClass();
+        $options = $format->get_format_options();
+        $state->fields->world = $options['world'];
 
         // Get the section parameters.
         foreach ($gameelement->get_parameters() as $keyparam => $valueparam) {
             $state->fields->$keyparam = $valueparam;
         }
 
+        $section->gameelement = $gameelement;
         // Populate the section parameters with more specific data.
         $state->fields = $this->populate_section($course, $state->fields, $section, $gameelement->get_type());
         $state->fields->id = $gameelement->get_id();
@@ -1741,7 +1752,10 @@ class manager {
                     foreach ($cmparameters[$cminfo->id] as $key => $value) {
                         $state->fields->$key = $value;
                     }
+                    $options = $format->get_format_options();
+                    $state->fields->world = $options['world'];
 
+                    $section->gameelement = $gameelement;
                     // Populate the course module parameters.
                     $state->fields = $this->populate_cm($course, $state->fields, $cm, $section, $gameelement->get_type());
 
@@ -1777,6 +1791,7 @@ class manager {
         global $DB;
 
         $course = get_course($cm->course);
+        $format = course_get_format($course->id);
         $states = [];
 
         // Prepare the state.
@@ -1784,6 +1799,8 @@ class manager {
         $state->action = 'put';
         $state->name = 'currentcm';
         $state->fields = new stdClass();
+        $options = $format->get_format_options();
+        $state->fields->world = $options['world'];
         $parameters = $gameelement->get_cm_parameters();
         // Get the cm parameters.
         foreach ($gameelement->get_cm_parameters()[$cm->id] as $keyparam => $valueparam) {
@@ -1792,6 +1809,7 @@ class manager {
             }
             $state->fields->$keyparam = $valueparam;
         }
+        $section->gameelement = $gameelement;
         // Populate the cm parameters with more specific data.
         $state->fields = $this->populate_cm($course, $state->fields, $cm, $section, $gameelement->get_type());
         $state->fields->id = $cm->id;
