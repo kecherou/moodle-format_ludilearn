@@ -21,38 +21,40 @@
     {}
 }}
 
-<div class="course-ranking">
+<div id="ludilearn-course-ranking-section-{{id}}" class="course-ranking">
     <div class="row">
         <div class="col-12">
             <div class="{{#parameters.restricted }}restricted{{/parameters.restricted}} {{^url}} nourl {{/url}}">
-                {{#parameters.lastaccess}}
-                    {{#parameters.gamified}}
-                        {{#parameters.noscore}}
-                            <img class="ludilearn-img img-responsive d-block mx-auto" src="{{config.wwwroot}}/course/format/ludilearn/pix/{{ world }}/none.svg" alt="Image no score">
-                        {{/parameters.noscore}}
-                        {{^parameters.noscore}}
-                            {{#school}}
-                                {{> format_ludilearn/ranking/school/summary}}
-                            {{/school}}
-                            {{#professional}}
-                                {{> format_ludilearn/ranking/professional/summary}}
-                            {{/professional}}
-                            {{#highschool}}
-                                {{> format_ludilearn/ranking/highschool/summary}}
-                            {{/highschool}}
-                        {{/parameters.noscore}}
-                    {{/parameters.gamified}}
-                    {{^parameters.gamified}}
-                        <img class="ludilearn-img img-responsive d-block mx-auto" src="{{config.wwwroot}}/course/format/ludilearn/pix/{{ world }}/none.svg" alt="Image not gamified">
-                    {{/parameters.gamified}}
-                {{/parameters.lastaccess}}
-                {{^parameters.lastaccess}}
-                    <img class="ludilearn-img img-responsive d-block mx-auto" src="{{config.wwwroot}}/course/format/ludilearn/pix/{{ world }}/unkown.svg" alt="Image no score">
-                {{/parameters.lastaccess}}
+                <div data-for="ludilearn-course-section-summary" data-id="{{id}}">
+                    {{#parameters.lastaccess}}
+                        {{#parameters.gamified}}
+                            {{#parameters.noscore}}
+                                <img class="ludilearn-img img-responsive d-block mx-auto" src="{{config.wwwroot}}/course/format/ludilearn/pix/{{ world }}/none.svg" alt="Image no score">
+                            {{/parameters.noscore}}
+                            {{^parameters.noscore}}
+                                {{#school}}
+                                    {{> format_ludilearn/ranking/school/summary}}
+                                {{/school}}
+                                {{#professional}}
+                                    {{> format_ludilearn/ranking/professional/summary}}
+                                {{/professional}}
+                                {{#highschool}}
+                                    {{> format_ludilearn/ranking/highschool/summary}}
+                                {{/highschool}}
+                            {{/parameters.noscore}}
+                        {{/parameters.gamified}}
+                        {{^parameters.gamified}}
+                            <img class="ludilearn-img img-responsive d-block mx-auto" src="{{config.wwwroot}}/course/format/ludilearn/pix/{{ world }}/none.svg" alt="Image not gamified">
+                        {{/parameters.gamified}}
+                    {{/parameters.lastaccess}}
+                    {{^parameters.lastaccess}}
+                        <img class="ludilearn-img img-responsive d-block mx-auto" src="{{config.wwwroot}}/course/format/ludilearn/pix/{{ world }}/unkown.svg" alt="Image no score">
+                    {{/parameters.lastaccess}}
+                </div>
                 <p class="text-center scoretext">
                     {{#parameters.lastaccess}}
                         {{^parameters.noscore}}
-                            <span>{{ parameters.score }} pts</span>
+                            <span data-for="ludilearn-course-section-score" data-id="{{id}}">{{ parameters.score }} pts</span>
                         {{/parameters.noscore}}
                     {{/parameters.lastaccess}}
                     <br>
@@ -70,3 +72,4 @@
         </div>
     </div>
 </div>
+{{> format_ludilearn/components/course }}
