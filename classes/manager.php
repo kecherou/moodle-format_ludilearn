@@ -1587,6 +1587,11 @@ class manager {
             $section->gameelement = $gameelement;
             // Populate the section parameters with more specific data.
             $state->fields = $this->populate_section($course, $state->fields, $section, $gameelementtype);
+            // Check if the gamelement is gamified.
+            $state->fields->gamified = false;
+            if ($section->gameelement->get_count_cm_gamified() > 0) {
+                $state->fields->gamified = true;
+            }
             $state->fields->id = $section->id;
             $states[] = $state;
         }
@@ -1623,6 +1628,11 @@ class manager {
         $section->gameelement = $gameelement;
         // Populate the section parameters with more specific data.
         $state->fields = $this->populate_section($course, $state->fields, $section, $gameelement->get_type());
+        // Check if the gamelement is gamified.
+        $state->fields->gamified = false;
+        if ($section->gameelement->get_count_cm_gamified() > 0) {
+            $state->fields->gamified = true;
+        }
         $state->fields->id = $section->id;
         $states[] = $state;
         return json_encode($states);
@@ -1661,6 +1671,11 @@ class manager {
         $section->gameelement = $gameelement;
         // Populate the section parameters with more specific data.
         $state->fields = $this->populate_section($course, $state->fields, $section, $gameelement->get_type());
+        // Check if the gamelement is gamified.
+        $state->fields->gamified = false;
+        if ($section->gameelement->get_count_cm_gamified() > 0) {
+            $state->fields->gamified = true;
+        }
         $state->fields->id = $gameelement->get_id();
         $states[] = $state;
 
