@@ -21,27 +21,32 @@
     {}
 }}
 
-<div class="cm-ranking {{#cm.parameters.restricted }}restricted{{/cm.parameters.restricted }}">
-    {{#parameters.noscore}}
-        <img class="ludilearn-img img-responsive d-block mx-auto" src="{{config.wwwroot}}/course/format/ludilearn/pix/{{ world }}/none.svg" alt="Image no score">
-    {{/parameters.noscore}}
-    {{^parameters.noscore}}
-        {{#parameters.gamified }}
-            {{#school}}
-                {{> format_ludilearn/ranking/school/group_view}}
-            {{/school}}
-            {{#professional}}
-                {{> format_ludilearn/ranking/professional/group_view}}
-            {{/professional}}
-            {{#highschool}}
-                {{> format_ludilearn/ranking/highschool/group_view}}
-            {{/highschool}}
-            <p class="text-center ranking-text">
-                <span class="playerscore">{{ cm.parameters.score }} pts</span>
-            </p>
-        {{/parameters.gamified }}
-        {{^parameters.gamified }}
+<div id="ludilearn-ranking-cm" class="cm-ranking {{#cm.parameters.restricted }}restricted{{/cm.parameters.restricted }}">
+    <div data-for="ludilearn-cm-groupviewtemplate">
+        {{#parameters.noscore}}
             <img class="ludilearn-img img-responsive d-block mx-auto" src="{{config.wwwroot}}/course/format/ludilearn/pix/{{ world }}/none.svg" alt="Image no score">
-        {{/parameters.gamified }}
-    {{/parameters.noscore}}
+        {{/parameters.noscore}}
+        {{^parameters.noscore}}
+            {{#parameters.gamified }}
+                {{#school}}
+                    {{> format_ludilearn/ranking/school/group_view}}
+                {{/school}}
+                {{#professional}}
+                    {{> format_ludilearn/ranking/professional/group_view}}
+                {{/professional}}
+                {{#highschool}}
+                    {{> format_ludilearn/ranking/highschool/group_view}}
+                {{/highschool}}
+            {{/parameters.gamified }}
+            {{^parameters.gamified }}
+                <img class="ludilearn-img img-responsive d-block mx-auto" src="{{config.wwwroot}}/course/format/ludilearn/pix/{{ world }}/none.svg" alt="Image no score">
+            {{/parameters.gamified }}
+        {{/parameters.noscore}}
+    </div>
+    {{#parameters.gamified }}
+        <p class="text-center ranking-text">
+            <span class="playerscore" data-for="ludilearn-cm-score">{{ cm.parameters.score }} pts</span>
+        </p>
+    {{/parameters.gamified }}
 </div>
+{{> format_ludilearn/components/cm }}
