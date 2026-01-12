@@ -21,7 +21,7 @@
     {}
 }}
 
-<div class="cm-avatar {{#cm.parameters.restricted }}restricted{{/cm.parameters.restricted }}">
+<div id="ludilearn-avatar-cm" class="cm-avatar {{#cm.parameters.restricted }}restricted{{/cm.parameters.restricted }}">
 {{#parameters.gamified }}
     <div class="row">
         <div class="col-6 rightdottedscore">
@@ -30,40 +30,52 @@
                  style="background-image: url({{config.wwwroot}}/course/format/ludilearn/pix/{{ world }}/avatar/backgrounds/background-1.svg)">
                 <img class="avatar-character" src="{{config.wwwroot}}/course/format/ludilearn/pix/{{ world }}/avatar/avatar.svg" style="z-index:0;" alt="Image avatar">
                 {{#parameters.sectionparameters.item-equiped-1 }}
-                    <img class="avatar-slot slot-1 item-equiped" src="{{config.wwwroot}}/course/format/ludilearn/pix/{{ world }}/avatar/items/images/image-01-{{ parameters.sectionparameters.item-equiped-1 }}.svg" alt="Image item equiped 1">
+                    <img class="avatar-slot slot-1 item-equiped" src="{{config.wwwroot}}/course/format/ludilearn/pix/{{ world }}/avatar/items/images/image-01-{{ parameters.sectionparameters.item-equiped-1 }}.svg" alt="Image item equiped 1"
+                         data-for="ludilearn-cm-itemequiped1">
                 {{/parameters.sectionparameters.item-equiped-1 }}
                 {{^parameters.sectionparameters.item-equiped-1 }}
-                    <img class="avatar-slot slot-1" src="{{config.wwwroot}}/course/format/ludilearn/pix/{{ world }}/avatar/item_img_default.svg"  alt="Image equiment 1">
+                    <img class="avatar-slot slot-1" src="{{config.wwwroot}}/course/format/ludilearn/pix/{{ world }}/avatar/item_img_default.svg"  alt="Image equiment 1"
+                         data-for="ludilearn-cm-itemequiped1">
                 {{/parameters.sectionparameters.item-equiped-1 }}
                 {{#parameters.sectionparameters.item-equiped-2 }}
-                    <img class="avatar-slot slot-2 item-equiped" src="{{config.wwwroot}}/course/format/ludilearn/pix/{{ world }}/avatar/items/images/image-02-{{ parameters.sectionparameters.item-equiped-2 }}.svg" alt="Image item equiped 2">
+                    <img class="avatar-slot slot-2 item-equiped" src="{{config.wwwroot}}/course/format/ludilearn/pix/{{ world }}/avatar/items/images/image-02-{{ parameters.sectionparameters.item-equiped-2 }}.svg" alt="Image item equiped 2"
+                         data-for="ludilearn-cm-itemequiped2">
                 {{/parameters.sectionparameters.item-equiped-2 }}
                 {{^parameters.sectionparameters.item-equiped-2 }}
-                    <img class="avatar-slot slot-2" src="{{config.wwwroot}}/course/format/ludilearn/pix/{{ world }}/avatar/item_img_default.svg"  alt="Image equiment 2">
+                    <img class="avatar-slot slot-2" src="{{config.wwwroot}}/course/format/ludilearn/pix/{{ world }}/avatar/item_img_default.svg"  alt="Image equiment 2"
+                         data-for="ludilearn-cm-itemequiped2">
                 {{/parameters.sectionparameters.item-equiped-2 }}
                 {{#parameters.sectionparameters.item-equiped-3 }}
-                    <img class="avatar-slot slot-3 item-equiped" src="{{config.wwwroot}}/course/format/ludilearn/pix/{{ world }}/avatar/items/images/image-03-{{ parameters.sectionparameters.item-equiped-3 }}.svg" alt="Image item equiped 3">
+                    <img class="avatar-slot slot-3 item-equiped" src="{{config.wwwroot}}/course/format/ludilearn/pix/{{ world }}/avatar/items/images/image-03-{{ parameters.sectionparameters.item-equiped-3 }}.svg" alt="Image item equiped 3"
+                         data-for="ludilearn-cm-itemequiped3">
                 {{/parameters.sectionparameters.item-equiped-3 }}
                 {{^parameters.sectionparameters.item-equiped-3 }}
-                    <img class="avatar-slot slot-3" src="{{config.wwwroot}}/course/format/ludilearn/pix/{{ world }}/avatar/item_img_default.svg"  alt="Image equiment 3">
+                    <img class="avatar-slot slot-3" src="{{config.wwwroot}}/course/format/ludilearn/pix/{{ world }}/avatar/item_img_default.svg"  alt="Image equiment 3"
+                         data-for="ludilearn-cm-itemequiped3">
                 {{/parameters.sectionparameters.item-equiped-3 }}
                 {{#parameters.sectionparameters.item-equiped-4 }}
-                    <img class="avatar-slot slot-4 item-equiped" src="{{config.wwwroot}}/course/format/ludilearn/pix/{{ world }}/avatar/items/images/image-04-{{ parameters.sectionparameters.item-equiped-4 }}.svg" alt="Image item equiped 4">
+                    <img class="avatar-slot slot-4 item-equiped" src="{{config.wwwroot}}/course/format/ludilearn/pix/{{ world }}/avatar/items/images/image-04-{{ parameters.sectionparameters.item-equiped-4 }}.svg" alt="Image item equiped 4"
+                         data-for="ludilearn-cm-itemequiped4">
                 {{/parameters.sectionparameters.item-equiped-4 }}
                 {{^parameters.sectionparameters.item-equiped-4 }}
-                    <img class="avatar-slot slot-4" src="{{config.wwwroot}}/course/format/ludilearn/pix/{{ world }}/avatar/item_img_default.svg"  alt="Image equiment 4">
+                    <img class="avatar-slot slot-4" src="{{config.wwwroot}}/course/format/ludilearn/pix/{{ world }}/avatar/item_img_default.svg"  alt="Image equiment 4"
+                         data-for="ludilearn-cm-itemequiped4">
                 {{/parameters.sectionparameters.item-equiped-4 }}
                 {{#parameters.sectionparameters.item-equiped-5 }}
-                    <img class="avatar-slot slot-5 item-equiped" src="{{config.wwwroot}}/course/format/ludilearn/pix/{{ world }}/avatar/items/images/image-05-{{ parameters.sectionparameters.item-equiped-5 }}.svg" alt="Image item equiped 5">
+                    <img class="avatar-slot slot-5 item-equiped" src="{{config.wwwroot}}/course/format/ludilearn/pix/{{ world }}/avatar/items/images/image-05-{{ parameters.sectionparameters.item-equiped-5 }}.svg" alt="Image item equiped 5"
+                         data-for="ludilearn-cm-itemequiped5">
                 {{/parameters.sectionparameters.item-equiped-5 }}
                 {{^parameters.sectionparameters.item-equiped-5 }}
-                    <img class="avatar-slot slot-5" src="{{config.wwwroot}}/course/format/ludilearn/pix/{{ world }}/avatar/item_img_default.svg"  alt="Image equiment 5">
+                    <img class="avatar-slot slot-5" src="{{config.wwwroot}}/course/format/ludilearn/pix/{{ world }}/avatar/item_img_default.svg"  alt="Image equiment 5"
+                         data-for="ludilearn-cm-itemequiped5">
                 {{/parameters.sectionparameters.item-equiped-5 }}
                 {{#parameters.sectionparameters.item-equiped-6 }}
-                    <img class="avatar-slot slot-6 item-equiped" src="{{config.wwwroot}}/course/format/ludilearn/pix/{{ world }}/avatar/items/images/image-06-{{ parameters.sectionparameters.item-equiped-6 }}.svg" alt="Image item equiped 6">
+                    <img class="avatar-slot slot-6 item-equiped" src="{{config.wwwroot}}/course/format/ludilearn/pix/{{ world }}/avatar/items/images/image-06-{{ parameters.sectionparameters.item-equiped-6 }}.svg" alt="Image item equiped 6"
+                         data-for="ludilearn-cm-itemequiped6">
                 {{/parameters.sectionparameters.item-equiped-6 }}
                 {{^parameters.sectionparameters.item-equiped-6 }}
-                    <img class="avatar-slot slot-6" src="{{config.wwwroot}}/course/format/ludilearn/pix/{{ world }}/avatar/item_img_default.svg"  alt="Image equiment 6">
+                    <img class="avatar-slot slot-6" src="{{config.wwwroot}}/course/format/ludilearn/pix/{{ world }}/avatar/item_img_default.svg"  alt="Image equiment 6"
+                         data-for="ludilearn-cm-itemequiped6">
                 {{/parameters.sectionparameters.item-equiped-6 }}
             </div>
         </div>
@@ -78,11 +90,12 @@
                 </div>
                 <div class="col-3">
                     <div class="count-items">
-                        <span class="numerator {{#parameters.sectionparameters.itemsownedcounttwodigits}} two-digits {{/parameters.sectionparameters.itemsownedcounttwodigits}}">
+                        <span class="numerator {{#parameters.sectionparameters.itemsownedcounttwodigits}} two-digits {{/parameters.sectionparameters.itemsownedcounttwodigits}}"
+                            data-for="ludilearn-cm-totalitemsowned">
                             {{ parameters.sectionparameters.totalitemsowned }}
                         </span>
                         <span class="fraction">/</span>
-                        <span class="denumerator">
+                        <span class="denumerator" data-for="ludilearn-cm-totalitems">
                             {{ parameters.sectionparameters.totalitems }}
                         </span>
                     </div>
@@ -99,3 +112,4 @@
     </div>
 {{/parameters.gamified}}
 </div>
+{{> format_ludilearn/components/cm }}

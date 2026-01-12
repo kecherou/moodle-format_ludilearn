@@ -1577,6 +1577,8 @@ class manager {
             $state->action = 'put';
             $state->name = 'sections';
             $state->fields = new stdClass();
+            $state->fields->courseid = $course->id;
+            $state->fields->sectionid = $section->id;
             $options = $format->get_format_options();
             $state->fields->world = $options['world'];
 
@@ -1618,6 +1620,8 @@ class manager {
         $state->action = 'put';
         $state->name = 'sections';
         $state->fields = new stdClass();
+        $state->fields->courseid = $course->id;
+        $state->fields->sectionid = $section->id;
         $options = $format->get_format_options();
         $state->fields->world = $options['world'];
 
@@ -1660,6 +1664,8 @@ class manager {
         $state->action = 'put';
         $state->name = 'currentsection';
         $state->fields = new stdClass();
+        $state->fields->courseid = $course->id;
+        $state->fields->sectionid = $section->id;
         $options = $format->get_format_options();
         $state->fields->world = $options['world'];
 
@@ -1696,7 +1702,8 @@ class manager {
                     $state->action = 'put';
                     $state->name = 'cms';
                     $state->fields = new stdClass();
-
+                    $state->fields->courseid = $course->id;
+                    $state->fields->sectionid = $section->id;
                     $state->fields->id = $cminfo->id;
                     $state->fields->name = format_string($cminfo->name);
                     $state->fields->viewed = $this->cm_viewed_by_user($cminfo->id, $USER->id);
@@ -1763,6 +1770,8 @@ class manager {
         $state->action = 'put';
         $state->name = 'currentcm';
         $state->fields = new stdClass();
+        $state->fields->courseid = $course->id;
+        $state->fields->sectionid = $section->id;
         $options = $format->get_format_options();
         $state->fields->world = $options['world'];
         $parameters = $gameelement->get_cm_parameters();
