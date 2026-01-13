@@ -64,7 +64,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'format_ludilearn/pagination', 
                 args: data
             }], true, true)[0].done((response) => {
 
-                // Render the table of programs.
+                // Render the table of users.
                 Templates.render('format_ludilearn/report/table_report', response)
                     .then((html) => {
 
@@ -83,6 +83,9 @@ define(['jquery', 'core/ajax', 'core/templates', 'format_ludilearn/pagination', 
                             params.contain = contain;
                             Pagination.load('pagination', pagination, callbackForPagination, params);
                         }
+
+                        // Initialize events to reset game profile.
+                        clickResetGameProfile();
                         return null;
                     }).fail(Notification.exception);
             }).fail(Notification.exception);
@@ -106,6 +109,36 @@ define(['jquery', 'core/ajax', 'core/templates', 'format_ludilearn/pagination', 
                 let inputsearch = $('#inputSearchReport');
                 let search = inputsearch.val();
                 loadReport(true, search, 10, 0, 'firstname');
+            });
+        };
+
+        /**
+         * Reset game profile.
+         *
+         * @param {int} userid User ID.
+         */
+        let resetGameProfile = (userid) => {
+            Ajax.call([{
+                methodname: 'format_ludilearn_reset_profile',
+                args: {
+                    userid: userid
+                }
+            }], true, true)[0].done((response) => {
+                if (response.success) {
+                    console.log($('[data-for="report-reset-profile"][data-id="' + userid + '"]'));
+                    $('[data-for="report-reset-profile"][data-id="' + userid + '"]').remove();
+                }
+            }).fail(Notification.exception);
+        };
+
+        /**
+         * Click event to reset game profile.
+         */
+        let clickResetGameProfile = () => {
+            $(document).on('click', '[data-for="report-reset-profile"]', (event) => {
+                event.preventDefault();
+                let userid = $(event.currentTarget).data('id');
+                resetGameProfile(userid);
             });
         };
 
