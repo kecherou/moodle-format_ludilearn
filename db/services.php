@@ -96,4 +96,11 @@ $functions = [
         'ajax' => true,
         'loginrequired' => true,
     ],
+    'format_ludilearn_reset_profile' => [
+        'classname' => 'format_ludilearn\external\reset_profile',
+        'description' => 'Reset user profile for ludilearn format.',
+        'type' => 'write',
+        'ajax' => true,
+        'loginrequired' => true,
+    ],
 ];

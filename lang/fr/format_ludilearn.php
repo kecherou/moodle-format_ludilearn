@@ -234,6 +234,7 @@ $string['disruptor_desc'] = 'Motivé par le changement';
 $string['philanthropist_desc'] = 'Motivé par le sens et l\'utilité';
 $string['navigation'] = 'Navigation profil HEXAD-12';
 $string['backtocourse'] = 'Continuer';
+$string['reset_profile'] = 'Réinitialiser l\'élément de jeu automatique';
 $string['partner_text'] = '<p>Développé par <a href="https://pimenko.com" target="_blank">Pimenko</a>, en collaboration avec le laboratoire LIRIS<br>
 Pour les retours techniques, merci d\'utiliser le <a href="https://github.com/DigiDago/moodle-format_ludilearn" target="_blank">répertoire Github</a><br><br>
 <b>À propos de Ludilearn+</b><br><br>

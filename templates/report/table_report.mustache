@@ -32,6 +32,17 @@
         </td>
         <td>{{ progression }}</td>
         <td>{{ lastaccess }}</td>
+        <td>
+        {{#displayresetprofile}}
+            test
+        {{/displayresetprofile}}
+        {{#displayresetprofile}}
+            <button class="btn btn-danger"
+                    data-for="report-reset-profile" data-id="{{id}}">
+                {{#str}} reset_profile, format_ludilearn {{/str}}
+            </button>
+        {{/displayresetprofile}}
+        <td>
     </tr>
 {{/users}}
 {{^users}}
