@@ -63,6 +63,9 @@ class get_report extends external_api {
         self::validate_context($context);
         require_capability('format/ludilearn:manage', $context);
         $course = $DB->get_record('course', ['id' => $courseid], '*', MUST_EXIST);
+        $format = course_get_format($courseid);
+        $options = $format->get_format_options();
+        $assignment = $options['assignment'];
         $manager = new manager();
         $users = [];
         $params = [
@@ -117,6 +120,15 @@ class get_report extends external_api {
                 $user->lastaccess = date('d-m-Y H:i:s', $lastaccess->timeaccess);
             } else {
                 $user->lastaccess = get_string('never');
+            }
+
+            // Verify if reset profile button must be displayed.
+            $user->displayresetprofile = false;
+            if ($assignment == 'automatic') {
+                $profileexists = $DB->record_exists('format_ludilearn_profile', ['userid' => $user->id]);
+                if ($profileexists) {
+                    $user->displayresetprofile = true;
+                }
             }
             $users[] = $user;
         }
@@ -213,6 +225,11 @@ class get_report extends external_api {
                         'lastaccess' => new external_value(
                             PARAM_TEXT,
                             'Last access',
+                            VALUE_REQUIRED
+                        ),
+                        'displayresetprofile' => new external_value(
+                            PARAM_BOOL,
+                            'Display reset profile button',
                             VALUE_REQUIRED
                         ),
                     ]
