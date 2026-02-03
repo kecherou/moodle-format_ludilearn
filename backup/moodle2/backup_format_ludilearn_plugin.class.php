@@ -66,6 +66,11 @@ class backup_format_ludilearn_plugin extends backup_format_plugin {
             'attributionid', 'name', 'value',
         ]);
 
+        // Table format_ludilearn_manual.
+        $manual = new backup_nested_element('manual', ['id'], [
+            'userid', 'courseid', 'type',
+        ]);
+
         $pluginwrapper = new backup_nested_element($this->get_recommended_name());
         // Add the child nodes.
         $pluginwrapper->add_child($gameelements);
@@ -73,6 +78,7 @@ class backup_format_ludilearn_plugin extends backup_format_plugin {
         $pluginwrapper->add_child($bysection);
         $pluginwrapper->add_child($params);
         $pluginwrapper->add_child($gameeleuser);
+        $pluginwrapper->add_child($manual);
         $plugin->add_child($pluginwrapper);
 
         // Filter the data to select only the gameelements of the current section.
@@ -108,9 +114,16 @@ class backup_format_ludilearn_plugin extends backup_format_plugin {
                 WHERE e.courseid = :courseid AND e.sectionid = :sectionid',
                 ['courseid' => backup::VAR_COURSEID, 'sectionid' => backup::VAR_SECTIONID]
             );
+
+            $manual->set_source_sql('
+                SELECT m.* FROM {format_ludilearn_manual} m
+                WHERE m.courseid = :courseid',
+                ['courseid' => backup::VAR_COURSEID]
+            );
         } else {
             $attributions->set_source_array([]);
             $gameeleuser->set_source_array([]);
+            $manual->set_source_array([]);
         }
 
         return $plugin;

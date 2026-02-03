@@ -22,13 +22,27 @@
 
 <tbody id="tbodyReport" class="tbodyReport">
 {{#users}}
-    <tr id="user-{{ id }}">
+    <tr id="ludilearn-report-user-{{ id }}">
         <td>{{ firstname }}</td>
         <td>{{ lastname }}</td>
         <td>{{ username }}</td>
-        <td>{{ gameelement }}</td>
+        <td>
+            {{{ gameelement }}}
+            {{#manuallyassigned}}<span class="badge badge-warning">{{#str}} manually_assigned, format_ludilearn {{/str}}</span>{{/manuallyassigned}}
+        </td>
         <td>{{ progression }}</td>
         <td>{{ lastaccess }}</td>
+        <td>
+        {{#displayresetprofile}}
+            test
+        {{/displayresetprofile}}
+        {{#displayresetprofile}}
+            <button class="btn btn-danger"
+                    data-for="report-reset-profile" data-id="{{id}}">
+                {{#str}} reset_profile, format_ludilearn {{/str}}
+            </button>
+        {{/displayresetprofile}}
+        <td>
     </tr>
 {{/users}}
 {{^users}}

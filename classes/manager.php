@@ -18,6 +18,7 @@ namespace format_ludilearn;
 
 use backup;
 use context_course;
+use context_module;
 use format_ludilearn\local\gameelements\avatar;
 use format_ludilearn\local\gameelements\badge;
 use format_ludilearn\local\gameelements\game_element;
@@ -26,15 +27,15 @@ use format_ludilearn\local\gameelements\progress;
 use format_ludilearn\local\gameelements\ranking;
 use format_ludilearn\local\gameelements\score;
 use format_ludilearn\local\gameelements\timer;
+use moodle_url;
 use question_engine;
 use stdClass;
-
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 require_once($CFG->libdir . '/adminlib.php');
 require_once($CFG->dirroot . '/mod/quiz/locallib.php');
-
+require_once($CFG->dirroot . '/course/format/lib.php');
 /**
  * Format Ludilearn's manager class.
  *
@@ -161,6 +162,11 @@ class manager {
         // For each user in the course, update the attribution of the game element.
         $users = get_enrolled_users($context);
         foreach ($users as $user) {
+            // Verify if the user has been attributed the game element manually.
+            if ($this->get_game_element_manually_assigned($courseid, $user->id)) {
+                continue;
+            }
+            // Attribute the game element to the user.
             $this->attribution_game_element($gameelementid, $user->id);
         }
     }
@@ -782,6 +788,11 @@ class manager {
 
             // Attribution of the game elements to the users.
             foreach ($users as $user) {
+                // Verify if the user has been attributed the game element manually.
+                if ($this->get_game_element_manually_assigned($courseid, $user->id)) {
+                    continue;
+                }
+
                 if ($assignment == 'manual' || $assignment == 'bysection') {
                     // Type of game element.
                     $type = $defaultgameelement;
@@ -823,6 +834,11 @@ class manager {
     public function sync_user_attribution_by_user(int $courseid, string $assignment, string $defaultgameelement,
                                                   int $userid): void {
         global $DB;
+
+        // Verify if the user has been attributed the game element manually.
+        if ($this->get_game_element_manually_assigned($courseid, $userid)) {
+            return;
+        }
 
         $sections = $DB->get_records('course_sections', ['course' => $courseid]);
         foreach ($sections as $section) {
@@ -937,5 +953,912 @@ class manager {
 
             }
         }
+    }
+
+    /**
+     * Populate the course module parameters.
+     *
+     * @param stdClass $course     Course.
+     * @param stdClass $parameters Parameters to populate.
+     * @param stdClass $section    Section of the course module.
+     * @param string $type         Type of the section.
+     *
+     * @return stdClass Populated parameters.
+     * @throws \moodle_exception
+     */
+    public function populate_section(stdClass $course, stdClass $parameters, stdClass $section, string $type): stdClass {
+        global $USER;
+
+        $sectioninfo = get_fast_modinfo($course)->get_section_info($section->section);
+
+        // Populate the section parameters in function of type.
+        switch ($type) {
+            case 'score':
+                if ($parameters->maxscore == 0) {
+                    $parameters->noscore = true;
+                }
+                break;
+            case 'badge':
+                $parameters->badge = $section->gameelement->get_current_badge();
+
+                // Count of badges for each type.
+                $parameters->bronzecount = $section->gameelement->get_bronze_count() == 0
+                        ? false : $section->gameelement->get_bronze_count();
+                $parameters->silvercount = $section->gameelement->get_silver_count() == 0
+                        ? false : $section->gameelement->get_silver_count();
+                $parameters->goldcount = $section->gameelement->get_gold_count() == 0
+                        ? false : $section->gameelement->get_gold_count();
+                $parameters->completioncount = $section->gameelement->get_completion_count() == 0
+                        ? false : $section->gameelement->get_completion_count();
+
+                break;
+            case 'progress':
+                // Different display if the section is completed.
+                if ($section->gameelement->get_progression() == 100) {
+                    $parameters->completed = true;
+                }
+
+                // Step of the progress bar.
+                $parameters->step = 0;
+                if ($section->gameelement->get_progression() != 0) {
+                    $parameters->step = intval($section->gameelement->get_progression() / 10);
+                }
+
+                // Attribution of planete number.
+                // Modulo 9 because there are 9 diffenrent planets.
+                $parameters->planetenumber = ($section->section) % 8 + 1;
+                break;
+            case 'avatar':
+                $ownedstatus = avatar::get_items_owned_status_by_section($course->id, $USER->id, $section->id);
+                $parameters->itemsownedcount = $ownedstatus->owned;
+                $parameters->itemsownablecount = $ownedstatus->ownable;
+                $ownedstatus = avatar::get_items_owned_status($course->id, $USER->id);
+
+                // Get total of items ownable in the section and total of items owned in the section.
+                $parameters->totalitems = $ownedstatus->ownable;
+                $parameters->totalitemsowned = $ownedstatus->owned;
+                if ($parameters->totalitemsowned >= 10) {
+                    $parameters->itemsownedcounttwodigits = true;
+                }
+                break;
+            case 'ranking':
+                $parameters->rank = $parameters->ranking->user_rank;
+                if ($parameters->rank != null) {
+                    $parameters->postfix = $this->get_postfix($parameters->rank);
+                }
+                if ($parameters->maxscore == 0) {
+                    $parameters->noscore = true;
+                }
+
+                $parameters->ranks = [];
+                if ($parameters->rank == 1) {
+                    // Case when user is first.
+                    $parameters->crowned = true;
+                    $parameters->ranked = false;
+
+                    // First user.
+                    $rank = new stdClass();
+                    $rank->rank = $this->stringify_rank(1);
+                    $rank->score = intval($parameters->score);
+                    $rank->me = true;
+                    $parameters->ranks[] = $rank;
+
+                    // User.
+                    if ($parameters->ranking->succeeding_user_rank != null) {
+                        $rank = new stdClass();
+                        $rank->rank = $this->stringify_rank($parameters->ranking->succeeding_user_rank);
+                        if ($parameters->ranking->succeeding_user_total_score != null) {
+                            $rank->score = intval($parameters->ranking->succeeding_user_total_score);
+                        } else {
+                            $rank->score = 0;
+                        }
+                        $parameters->ranks[] = $rank;
+                    }
+
+                    // After user.
+                    if ($parameters->ranking->succeeding2_user_rank != null) {
+                        $rank = new stdClass();
+                        $rank->rank = $this->stringify_rank(3);
+                        if ($parameters->ranking->succeeding2_user_total_score != null) {
+                            $rank->score = intval($parameters->ranking->succeeding2_user_total_score);
+                        } else {
+                            $rank->score = 0;
+                        }
+                        $parameters->ranks[] = $rank;
+                    }
+                } else if ($parameters->rank == 2) {
+                    // Case when user is not first.
+                    $parameters->ranked = true;
+
+                    // First user.
+                    $rank = new stdClass();
+                    $rank->rank = $this->stringify_rank(1);
+                    if ($parameters->ranking->first_user_total_score != null) {
+                        $rank->score = intval($parameters->ranking->first_user_total_score);
+                    } else {
+                        $rank->score = 0;
+                    }
+                    $parameters->ranks[] = $rank;
+
+                    // User.
+                    $rank = new stdClass();
+                    $rank->rank = $this->stringify_rank($parameters->rank);
+                    $rank->score = intval($parameters->score);
+                    $rank->me = true;
+                    $parameters->ranks[] = $rank;
+
+                    // After user.
+                    if ($parameters->ranking->succeeding_user_rank != null) {
+                        $rank = new stdClass();
+                        $rank->rank = $this->stringify_rank($parameters->ranking->succeeding_user_rank);
+                        if ($parameters->ranking->succeeding_user_total_score != null) {
+                            $rank->score = intval($parameters->ranking->succeeding_user_total_score);
+                        } else {
+                            $rank->score = 0;
+                        }
+                        $parameters->ranks[] = $rank;
+                    }
+                } else {
+                    // Case when user is last.
+                    $parameters->ranked = true;
+
+                    // First user.
+                    $rank = new stdClass();
+                    $rank->rank = $this->stringify_rank(1);
+                    if ($parameters->ranking->first_user_total_score != null) {
+                        $rank->score = intval($parameters->ranking->first_user_total_score);
+                    } else {
+                        $rank->score = 0;
+                    }
+                    $parameters->ranks[] = $rank;
+
+                    // Before user.
+                    if ($parameters->ranking->preceding_user_rank != null) {
+                        $rank = new stdClass();
+                        $rank->rank = $this->stringify_rank($parameters->ranking->preceding_user_rank);
+                        if ($parameters->ranking->preceding_user_total_score != null) {
+                            $rank->score = intval($parameters->ranking->preceding_user_total_score);
+                        } else {
+                            $rank->score = 0;
+                        }
+                        $parameters->ranks[] = $rank;
+                    }
+
+                    // User.
+                    $rank = new stdClass();
+                    if ($parameters->rank != null) {
+                        $rank->rank = $this->stringify_rank($parameters->rank);
+                    }
+                    $rank->score = intval($parameters->score);
+                    $rank->me = true;
+                    $parameters->ranks[] = $rank;
+                }
+                $parameters->uniqueid = uniqid('section-summary-');
+                $parameters->uniqueid2 = uniqid('section-groupview-');
+                break;
+            case 'timer':
+                $parameters->averagetime = $section->gameelement->get_averagetime();
+                if ($parameters->averagetime > 0) {
+                    $minutes = str_pad(intval($parameters->averagetime / 60), 2, "0", STR_PAD_LEFT);
+                    $secondes = str_pad(intval($parameters->averagetime % 60), 2, "0", STR_PAD_LEFT);
+                    $parameters->averagetime = $minutes . ":" . $secondes;
+                } else {
+                    $parameters->averagetime = "--:--";
+                }
+                break;
+            default:
+                break;
+        }
+
+        if (!$sectioninfo->get_available()) {
+            $parameters->restricted = true;
+            $parameters->restrictedinfo =
+                    \core_availability\info::format_info($sectioninfo->availableinfo, $course->id);
+        }
+        return $parameters;
+    }
+
+    /**
+     * Populate the course module parameters.
+     *
+     * @param stdClass $course        Course.
+     * @param stdClass $parameters    Parameters to populate.
+     * @param stdClass $cm            Course module.
+     * @param stdClass $parentsection Section of the course module.
+     * @param string $type            Type of the section.
+     *
+     * @return stdClass Populated parameters.
+     * @throws \coding_exception
+     * @throws \dml_exception
+     * @throws \moodle_exception
+     */
+    public function populate_cm(stdClass $course, stdClass $parameters, stdClass $cm, stdClass $parentsection,
+            string $type): stdClass {
+        global $PAGE, $DB;
+        $cminfo = get_fast_modinfo($course)->get_cm($cm->id);
+
+        // Populate the section parameters in function of type.
+        switch ($type) {
+            case 'score':
+                if ($parameters->gamified) {
+                    if ($parameters->maxscore == 0) {
+                        $parameters->noscore = true;
+                    }
+                }
+                break;
+            case 'badge':
+                if ($parameters->gamified) {
+                    if (isset($parameters->progression)) {
+                        $parameters->badge = $parentsection->gameelement->get_cm_badge($parameters->progression);
+                    } else {
+                        $parameters->badge = $parentsection->gameelement->get_cm_badge(0);
+                    }
+                }
+                break;
+            case 'progress':
+                if ($parameters->gamified) {
+                    $parameters->step = 0;
+                    if ($parameters->progression > 0) {
+                        $parameters->step = intval($parameters->progression / 10);
+                    }
+
+                    $parameters->sectionprogression = $parentsection->gameelement->get_progression();
+                    $parameters->sectionstep = 0;
+                    if ($parameters->sectionprogression > 0) {
+                        $parameters->sectionstep = intval($parameters->sectionprogression / 10);
+                    }
+                    // Attribution of planete number.
+                    // Modulo 9 because there are 9 diffenrent planets.
+                    $parameters->planetenumber = ($parentsection->section) % 8 + 1;
+                }
+                break;
+            case 'avatar':
+                if ($parameters->gamified) {
+                    if ($parameters->progression > 0) {
+                        $parameters->completed = true;
+                    }
+                }
+                $parameters->sectionparameters = $parentsection->parameters;
+                break;
+            case 'timer';
+                if ($parameters->gamified) {
+                    // Format best time.
+                    if ($parameters->besttime > 0) {
+                        $besttime = intval($parameters->besttime);
+                        $minutes = str_pad(intval($besttime / 60), 2, "0", STR_PAD_LEFT);
+                        $secondes = str_pad(intval($besttime % 60), 2, "0", STR_PAD_LEFT);
+                        $parameters->besttime = $minutes . ":" . $secondes;
+
+                        if ($parameters->bestpenalties > 0) {
+                            $parameters->bestpenaltiescalc = $parameters->bestpenalties *
+                                    $parentsection->gameelement->get_penalties();
+                        }
+                    } else {
+                        $parameters->besttime = "--:--";
+                    }
+                }
+                break;
+            case 'ranking':
+                if ($parameters->gamified) {
+                    if ($parameters->maxscore == 0) {
+                        $parameters->noscore = true;
+                    }
+                    if ($parameters->maxscore == 0) {
+                        $parameters->noscore = true;
+                    }
+                    if ($parameters->ranking->user_rank == 1) {
+                        $parameters->crowned = true;
+                        $parameters->ranked = false;
+                    } else {
+                        $parameters->ranked = true;
+                    }
+
+                    // Only if gradable.
+                    $gradable = $parentsection->gameelement->is_gradable($cminfo->id);
+                    if ($gradable && $parameters->gamified) {
+                        $parameters->score = intval($parameters->score);
+                        if (isset($parameters->ranking->preceding2_user_rank)) {
+                            $before2 = $parameters->ranking->preceding2_user_rank;
+                            if ($before2 != 0 && $before2 != null) {
+                                $parameters->before_2 = $before2;
+                                $parameters->before_2_th = $this->get_postfix($before2);
+                            }
+                        }
+                        if (isset($parameters->ranking->preceding_user_rank)) {
+                            $before1 = $parameters->ranking->preceding_user_rank;
+                            if ($before1 != 0 && $before1 != null) {
+                                $parameters->before_1 = $before1;
+                                $parameters->before_1_th = $this->get_postfix($before1);
+                            }
+                        }
+                        if (isset($parameters->ranking->user_rank)) {
+                            $parameters->rank = $parameters->ranking->user_rank;
+                            if ($parameters->ranking->user_rank != 0 && $parameters->ranking->user_rank != null) {
+                                $parameters->postfix = $this->get_postfix($parameters->ranking->user_rank);
+                            }
+                        }
+                        if (isset($parameters->ranking->succeeding_user_rank)) {
+                            $after1 = $parameters->ranking->succeeding_user_rank;
+                            if ($after1 != 0 && $after1 != null) {
+                                $parameters->after_1 = $after1;
+                                $parameters->after_1_th = $this->get_postfix($after1);
+                            }
+                        }
+                        if (isset($parameters->ranking->succeeding2_user_rank)) {
+                            $after2 = $parameters->ranking->succeeding2_user_rank;
+                            if ($after2 != 0 && $after2 != null) {
+                                $parameters->after_2 = $after2;
+                                $parameters->after_2_th = $this->get_postfix($after2);
+                            }
+                        }
+                    }
+                    $parameters->uniqueid = uniqid('cm-summary-');
+                    $parameters->uniqueid2 = uniqid('cm-groupview-');
+                }
+                break;
+            default:
+                break;
+        }
+
+        // Check if the course module is restricted.
+        $parameters->restricted = false;
+        if (!$cminfo->available) {
+            $parameters->restricted = true;
+            $parameters->restrictedinfo =
+                    \core_availability\info::format_info($cminfo->availableinfo, $course->id);
+        }
+        return $parameters;
+    }
+
+    /**
+     * Get the element by section.
+     *
+     * @param int $courseid The course id.
+     * @param int $sectionid The section id.
+     * @param string $type The type of the game element.
+     *
+     * @return game_element The game element.
+     * @throws \coding_exception
+     */
+    public function get_element_by_section(int $courseid, int $sectionid, string $type): game_element {
+        global $DB, $USER;
+        $gameelement = null;
+        $format = course_get_format($courseid);
+        $options = $format->get_format_options();
+        $assignment = $options['assignment'];
+
+        $isenrolled = false;
+        if (is_enrolled(context_course::instance($courseid), $USER->id)) {
+            $isenrolled = true;
+        }
+        $typeassigedmanually = $this->get_game_element_manually_assigned($courseid, $USER->id);
+        // Verify if the user has been attributed the game element manually.
+        if ($typeassigedmanually) {
+             return game_element::get_element($courseid, $sectionid, $USER->id,
+                    $typeassigedmanually);
+        }
+        if ($assignment != 'bysection' || !$isenrolled) {
+            $gameelement = game_element::get_element($courseid, $sectionid, $USER->id,
+                    $type);
+            // If attribution is missing, create one.
+            if ($gameelement == null && $isenrolled) {
+                $gameelement = $DB->get_record('format_ludilearn_elements',
+                        ['courseid' => $courseid, 'sectionid' => $sectionid, 'type' => $type]);
+                $this->attribution_game_element($gameelement->id, $USER->id);
+                $gameelement = game_element::get_element($courseid, $sectionid, $USER->id,
+                        $type);
+            }
+        } else {
+            // Get the attributions by section.
+            $sql = "SELECT ge.id, ge.type FROM {format_ludilearn_bysection} bs
+                        INNER JOIN {format_ludilearn_elements} ge ON bs.gameelementid = ge.id
+                        WHERE bs.courseid = :courseid AND bs.sectionid = :sectionid";
+            $bysection = $DB->get_record_sql($sql,
+                    ['courseid' => $courseid, 'sectionid' => $sectionid]);
+            if ($bysection) {
+                $gameelement = game_element::get_element($courseid,
+                        $sectionid,
+                        $USER->id,
+                        $bysection->type);
+                // If attribution is missing, create one.
+                if ($gameelement == null) {
+                    $this->attribution_game_element($bysection->id, $USER->id);
+                    $gameelement = game_element::get_element($courseid, $sectionid, $USER->id,
+                            $bysection->type);
+                }
+            } else {
+                $gameelement = game_element::get_element($courseid,
+                        $sectionid,
+                        $USER->id,
+                        $type);
+                // If attribution is missing, create one.
+                if ($gameelement == null) {
+                    $gameelement = $DB->get_record('format_ludilearn_elements',
+                            ['courseid' => $courseid, 'sectionid' => $sectionid, 'type' => $type]);
+                    $this->attribution_game_element($gameelement->id, $USER->id);
+                    $gameelement = game_element::get_element($courseid, $sectionid, $USER->id,
+                            $type);
+                }
+            }
+        }
+        return $gameelement;
+    }
+
+    /**
+     * Get the element type for a course.
+     *
+     * @param int $courseid Course ID.
+     * @param int $userid   User ID.
+     *
+     * @return string|bool The element type or false.
+     * @throws \dml_exception
+     */
+    public function get_element_type(int $courseid, int $userid): string|bool {
+        global $DB;
+        $context = context_course::instance($courseid);
+        $manager = new manager();
+        $format = course_get_format($courseid);
+
+
+        // Verify if the game elements has been assigned manually to the user.
+        $gameelementtype = $this->get_game_element_manually_assigned($courseid, $userid);
+        if ($gameelementtype) {
+            return $gameelementtype;
+        }
+        // Get the format options.
+        $options = $format->get_format_options();
+
+        // Get the default game element.
+        $gameelementtype = $options['default_game_element'];
+        $assignment = $options['assignment'];
+        $notanswered = false;
+        // Verify if the cours is assigned automatically and if the user has answered yet to the questionnaire.
+        if ($assignment == 'automatic') {
+            $profile = $DB->get_record('format_ludilearn_profile', ['userid' => $userid]);
+            if ($profile) {
+                $gameelementtype = $profile->type;
+
+                // Verify if the user has attributions.
+                $manager->check_attribution_course($courseid, $userid, $gameelementtype);
+            } else {
+                $notanswered = true;
+            }
+        }
+
+        $isenrolled = false;
+        if (is_enrolled($context, $userid)) {
+            $isenrolled = true;
+        }
+
+        // If the user has capabilities to update the course and he is not enrolled or the course is assigned automatically.
+        if (has_capability('moodle/course:update', $context) && (($assignment == 'automatic') || !$isenrolled)) {
+            // Verify is there is an attribution for this user.
+            $attributionexist = $manager->has_attribution($courseid, $userid);
+            // If not attribution exist, create one with nogamified type.
+            $gameelementtype = 'nogamified';
+            if (!$attributionexist) {
+                $manager->check_attribution_course($courseid, $userid, $gameelementtype);
+            }
+            $notanswered = false;
+        }
+        if ($notanswered) {
+            return false;
+        }
+        return $gameelementtype;
+    }
+
+    /**
+     * Get if the game element is manually assigned for a user.
+     *
+     * @param int $courseid Course ID.
+     * @param int $userid   User ID.
+     *
+     * @return string|bool The element type or false.
+     * @throws \dml_exception
+     */
+    public function get_game_element_manually_assigned(int $courseid, int $userid): string|bool {
+        global $DB;
+
+        $gameelementtyperecord = $DB->get_record('format_ludilearn_manual', ['courseid' => $courseid, 'userid' => $userid]);
+        if ($gameelementtyperecord) {
+            return $gameelementtyperecord->type;
+        }
+        return false;
+    }
+
+    /**
+     * Assign a game element type manually to a user.
+     *
+     * @param int $courseid Course ID.
+     * @param int $userid   User ID.
+     * @param string $type  Game element type.
+     *
+     * @return void
+     * @throws \dml_exception
+     */
+    public function assign_game_element_manually(int $courseid, int $userid, string $type): void {
+        global $DB;
+
+        // Verify if an attribution already exist.
+        $gameelementtyperecord = $DB->get_record('format_ludilearn_manual', ['courseid' => $courseid, 'userid' => $userid]);
+        if ($gameelementtyperecord) {
+            if ($gameelementtyperecord->type != $type) {
+                // Update the type.
+                $gameelementtyperecord->type = $type;
+                $DB->update_record('format_ludilearn_manual', $gameelementtyperecord);
+            } else {
+                // No change.
+                return;
+            }
+        } else {
+            // Create a new record.
+            $newrecord = new stdClass();
+            $newrecord->courseid = $courseid;
+            $newrecord->userid = $userid;
+            $newrecord->type = $type;
+            $DB->insert_record('format_ludilearn_manual', $newrecord);
+        }
+
+        // Get all game elements of the course.
+        $gameelements = $DB->get_records('format_ludilearn_elements', ['courseid' => $courseid, 'type' => $type]);
+        foreach ($gameelements as $gameelement) {
+            $this->attribution_game_element($gameelement->id, $userid);
+        }
+    }
+
+    /**
+     * Remove the manual assignment of a game element type for a user.
+     *
+     * @param int $courseid Course ID.
+     * @param int $userid   User ID.
+     *
+     * @return void
+     * @throws \dml_exception
+     */
+    public function remove_game_element_manually_assignment(int $courseid, int $userid): void {
+        global $DB;
+
+        // Remove the manual assignment record.
+        $DB->delete_records('format_ludilearn_manual', ['courseid' => $courseid, 'userid' => $userid]);
+
+        $context = context_course::instance($courseid);
+        $manager = new manager();
+        $format = course_get_format($courseid);
+
+        // Get the format options.
+        $options = $format->get_format_options();
+
+        // Get the default game element.
+        $gameelementtype = $options['default_game_element'];
+        $assignment = $options['assignment'];
+
+        // Change the attributions to the default game element.
+        $this->sync_user_attribution_by_user($courseid, $assignment, $gameelementtype, $userid);
+    }
+
+    /**
+     * Get the state of the course for a user.
+     *
+     * @param int $courseid Course ID.
+     *
+     * @return string State of the course for the user.
+     * @throws \dml_exception
+     */
+    public function get_course_state(int $courseid): string {
+        global $DB, $USER;
+
+        $states = [];
+        $course = get_course($courseid);
+        $format = course_get_format($courseid);
+
+        // Get the game element type for the course.
+        $gameelementtype = $this->get_element_type($courseid, $USER->id);
+
+        if (!$gameelementtype) {
+            return json_encode($states);
+        }
+        // Get all the sections with their game element.
+        $sections = $DB->get_records('course_sections', ['course' => $courseid], 'section');
+        foreach ($sections as $key => $section) {
+
+            // Don't get hidden sections.
+            $sectioninfo = get_fast_modinfo($course)->get_section_info($section->section);
+            $uservisible = $format->is_section_visible($sectioninfo);
+            if (!$uservisible) {
+                continue;
+            }
+
+            $gameelement = $this->get_element_by_section($courseid,
+                $section->id,
+                $gameelementtype);
+
+            // Prepare the state.
+            $state = new stdClass();
+            $state->action = 'put';
+            $state->name = 'sections';
+            $state->fields = new stdClass();
+            $state->fields->courseid = $course->id;
+            $state->fields->sectionid = $section->id;
+            $options = $format->get_format_options();
+            $state->fields->world = $options['world'];
+
+            // Get the section parameters.
+            foreach ($gameelement->get_parameters() as $keyparam => $valueparam) {
+                $state->fields->$keyparam = $valueparam;
+            }
+            $section->gameelement = $gameelement;
+            // Populate the section parameters with more specific data.
+            $state->fields = $this->populate_section($course, $state->fields, $section, $gameelementtype);
+            // Check if the gamelement is gamified.
+            $state->fields->gamified = false;
+            if ($section->gameelement->get_count_cm_gamified() > 0) {
+                $state->fields->gamified = true;
+            }
+            $state->fields->id = $section->id;
+            $states[] = $state;
+        }
+
+        return json_encode($states);
+    }
+
+    /**
+     * Get the state of a course section for a user.
+     *
+     * @param stdClass $section Section.
+     * @param game_element $gameelement Game element.
+     *
+     * @return string State of the course section for the user.
+     * @throws \dml_exception
+     */
+    public function get_course_section_state(stdClass $course, stdClass $section, game_element $gameelement) {
+        global $DB;
+        $format = course_get_format($course->id);
+
+        $states = [];
+        // Prepare the state.
+        $state = new stdClass();
+        $state->action = 'put';
+        $state->name = 'sections';
+        $state->fields = new stdClass();
+        $state->fields->courseid = $course->id;
+        $state->fields->sectionid = $section->id;
+        $options = $format->get_format_options();
+        $state->fields->world = $options['world'];
+
+        // Get the section parameters.
+        foreach ($gameelement->get_parameters() as $keyparam => $valueparam) {
+            $state->fields->$keyparam = $valueparam;
+        }
+        $section->gameelement = $gameelement;
+        // Populate the section parameters with more specific data.
+        $state->fields = $this->populate_section($course, $state->fields, $section, $gameelement->get_type());
+        // Check if the gamelement is gamified.
+        $state->fields->gamified = false;
+        if ($section->gameelement->get_count_cm_gamified() > 0) {
+            $state->fields->gamified = true;
+        }
+        $state->fields->id = $section->id;
+        $states[] = $state;
+        return json_encode($states);
+    }
+
+    /**
+     * Get the state of a section for a user.
+     *
+     * @param stdClass $section Section.
+     * @param game_element $gameelement Game element.
+     *
+     * @return string State of the section for the user.
+     * @throws \dml_exception
+     */
+    public function get_section_state(stdClass $section, game_element $gameelement): string {
+        global $DB, $USER;
+
+        $states = [];
+        $course = get_course($section->course);
+        $contextcourse = context_course::instance($course->id);
+        $format = course_get_format($course->id);
+
+        // Prepare the state.
+        $state = new stdClass();
+        $state->action = 'put';
+        $state->name = 'currentsection';
+        $state->fields = new stdClass();
+        $state->fields->courseid = $course->id;
+        $state->fields->sectionid = $section->id;
+        $options = $format->get_format_options();
+        $state->fields->world = $options['world'];
+
+        // Get the section parameters.
+        foreach ($gameelement->get_parameters() as $keyparam => $valueparam) {
+            $state->fields->$keyparam = $valueparam;
+        }
+
+        $section->gameelement = $gameelement;
+        // Populate the section parameters with more specific data.
+        $state->fields = $this->populate_section($course, $state->fields, $section, $gameelement->get_type());
+        // Check if the gamelement is gamified.
+        $state->fields->gamified = false;
+        if ($section->gameelement->get_count_cm_gamified() > 0) {
+            $state->fields->gamified = true;
+        }
+        $state->fields->id = $gameelement->get_id();
+        $states[] = $state;
+
+        // Get cms in the section.
+        $sequence = explode(",", $section->sequence);
+        foreach ($sequence as $cmidsequence) {
+            if (!empty($cmidsequence)) {
+                $cm = $DB->get_record('course_modules', ['id' => $cmidsequence]);
+                if ($cm) {
+                    $cminfo = get_fast_modinfo($course->id)->get_cm($cm->id);
+
+                    // Don't show hidden course module.
+                    if (!$cminfo->visible || !$cminfo->is_visible_on_course_page()) {
+                        continue;
+                    }
+
+                    $state = new stdClass();
+                    $state->action = 'put';
+                    $state->name = 'cms';
+                    $state->fields = new stdClass();
+                    $state->fields->courseid = $course->id;
+                    $state->fields->sectionid = $section->id;
+                    $state->fields->id = $cminfo->id;
+                    $state->fields->name = format_string($cminfo->name);
+                    $state->fields->viewed = $this->cm_viewed_by_user($cminfo->id, $USER->id);
+
+                    // Verify if the cm is a label.
+                    if ($cminfo->modname == 'label') {
+                        $state->fields->label = true;
+                        $label = $DB->get_record('label', ['id' => $cminfo->instance]);
+                        if ($label) {
+                            $state->fields->labeltext = $cminfo->get_formatted_content();
+                        }
+                        $states[] = $state;
+                        continue;
+                    }
+
+                    $cmparameters = $gameelement->get_cm_parameters();
+                    foreach ($cmparameters[$cminfo->id] as $key => $value) {
+                        $state->fields->$key = $value;
+                    }
+                    $options = $format->get_format_options();
+                    $state->fields->world = $options['world'];
+
+                    $section->gameelement = $gameelement;
+                    // Populate the course module parameters.
+                    $state->fields = $this->populate_cm($course, $state->fields, $cm, $section, $gameelement->get_type());
+
+                    $contextactivity = context_module::instance($cminfo->id);
+                    if (has_capability('moodle/course:viewhiddenactivities', $contextactivity)
+                            || has_capability('moodle/course:update', $contextcourse) || $cminfo->available) {
+                        if ($cminfo->get_url()) {
+                            $state->fields->url = $cminfo->get_url()->out(false);
+                        }
+
+                    }
+                    $states[] = $state;
+                }
+            }
+        }
+
+        return json_encode($states);
+    }
+
+
+    /**
+     * Get the state of a course module for a user.
+     *
+     * @param stdClass $cm Course module.
+     * @param stdClass $section Section of the course module.
+     * @param game_element $gameelement Game element.
+     *
+     * @return string State of the course module for the user.
+     * @throws \dml_exception
+     * @throws \moodle_exception
+     */
+    public function get_cm_state(stdClass $cm, stdClass $section, game_element $gameelement): string {
+        global $DB;
+
+        $course = get_course($cm->course);
+        $format = course_get_format($course->id);
+        $states = [];
+
+        // Prepare the state.
+        $state = new stdClass();
+        $state->action = 'put';
+        $state->name = 'currentcm';
+        $state->fields = new stdClass();
+        $state->fields->courseid = $course->id;
+        $state->fields->sectionid = $section->id;
+        $options = $format->get_format_options();
+        $state->fields->world = $options['world'];
+        $parameters = $gameelement->get_cm_parameters();
+        // Get the cm parameters.
+        foreach ($gameelement->get_cm_parameters()[$cm->id] as $keyparam => $valueparam) {
+            if ($keyparam == 'id' && $valueparam != $cm->id) {
+                continue;
+            }
+            $state->fields->$keyparam = $valueparam;
+        }
+        $section->gameelement = $gameelement;
+        // Populate the cm parameters with more specific data.
+        $state->fields = $this->populate_cm($course, $state->fields, $cm, $section, $gameelement->get_type());
+        $state->fields->id = $cm->id;
+        $states[] = $state;
+
+        return json_encode($states);
+    }
+
+    /**
+     * Get the state of a resource for a user.
+     *
+     * @param string $resource Resource type (course, section, cm).
+     * @param int $id Resource ID.
+     *
+     * @return string State of the resource for the user.
+     * @throws \dml_exception
+     */
+    public function get_state(string $resource, int $id): string {
+        global $DB, $USER;
+
+        $states = [];
+        switch ($resource) {
+            case 'course':
+                return $this->get_course_state($id);
+            case 'section':
+                $section = $DB->get_record('course_sections', ['id' => $id]);
+                $course = get_course($section->course);
+                $format = course_get_format($course->id);
+
+                // Don't get hidden sections.
+                $sectioninfo = get_fast_modinfo($course)->get_section_info($section->section);
+                $uservisible = $format->is_section_visible($sectioninfo);
+
+                // If the section is not visible for the user, return empty states.
+                if (!$uservisible) {
+                    return json_encode($states);
+                }
+                // Get the global game element type for the course.
+                $gameelementtype = $this->get_element_type($course->id, $USER->id);
+
+                // If the there is no game element type, it means the user has not game element assigned.
+                if (!$gameelementtype) {
+                    return json_encode($states);
+                }
+
+                $gameelement = $this->get_element_by_section($course->id,
+                        $section->id,
+                        $gameelementtype);
+                return $this->get_section_state($section, $gameelement);
+            case 'cm':
+                $cm = $DB->get_record('course_modules', ['id' => $id]);
+                $course = get_course($cm->course);
+                $format = course_get_format($course->id);
+
+                $section = $DB->get_record('course_sections', ['id' => $cm->section]);
+
+                // Don't show hidden course module.
+                $cminfo = get_fast_modinfo($course->id)->get_cm($cm->id);
+                if (!$cminfo->visible || !$cminfo->is_visible_on_course_page()) {
+                    return json_encode($states);
+                }
+
+                // Get the global game element type for the course.
+                $gameelementtype = $this->get_element_type($course->id, $USER->id);
+
+                // If the there is no game element type, it means the user has not game element assigned.
+                if (!$gameelementtype) {
+                    return json_encode($states);
+                }
+
+                $gameelement = $this->get_element_by_section($course->id,
+                        $section->id,
+                        $gameelementtype);
+
+                return $this->get_cm_state($cm, $section, $gameelement);
+        }
+        return json_encode($states);
     }
 }

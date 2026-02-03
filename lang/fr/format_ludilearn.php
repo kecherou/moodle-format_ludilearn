@@ -65,6 +65,7 @@ $string['default_game_element'] = 'Élément de jeu par défaut';
 $string['default_game_element_help'] = 'L\'élément de jeu par défaut est celui qui est appliqué à tous les apprenants et à toutes les sections du cours.';
 $string['lesson'] = 'Leçon';
 $string['editgameeleements'] = 'Paramétrer les éléments de jeu';
+$string['editgameeleement'] = 'Modifier l\'éléments de jeu';
 $string['gameelements'] = 'Éléments de jeu';
 $string['gameelement'] = 'Élément de jeu';
 $string['parameters'] = 'Paramètrage';
@@ -130,7 +131,9 @@ $string['besttime'] = 'Meilleur temps';
 $string['averagetime'] = 'Temps moyen';
 $string['reference_time'] = 'Temps de référence';
 $string['ranking'] = 'Classement';
-$string['report'] = 'Rapport';
+$string['report'] = 'Suivi des participants';
+$string['report_description'] = 'Cette page permet de suivre la progression des participants et de visualiser l\'élément de jeu qui leur est attribué. Pour personnaliser l\'expérience ludique, vous pouvez modifier l\'élément de jeu d’un participant à tout moment : cliquez sur le nom de l\'élément de jeu dans le tableau puis sélectionnez un nouvel élément dans le menu déroulant.';
+$string['manually_assigned'] = 'Attribution personnalisée';
 $string['progression'] = 'Progression';
 $string['missinganswers'] = 'Vous devez répondre à cette question pour valider le questionnaire';
 $string['equip'] = 'Équiper';
@@ -208,7 +211,7 @@ $string['settings:rankingdescription'] = '<p> L\'élément de jeu classement off
 2. Les activités avec uniquement de l\'achèvement n\'ont pas d\'impact sur le classement.<br>
 3. Dans le cas des activités combinant note et achèvement, uniquement la note est prise en compte pour le classement.</p>';
 $string['settings:nogamifieddescription'] = '<p>L\'élément de jeu non ludifié apparait sur toutes les activités et les ressources de cours sans ludification.</p>';
-$string['settings:updateprogression'] = 'Mettre à jour de la progression';
+$string['settings:updateprogression'] = 'Mettre à jour la progression';
 $string['settings:updateprogressiondescription'] = '<p>Cette option permet de mettre à jour manuellement la progression des apprenants dans le cours.<br>
 Cela peut être utile lorsque les éléments de jeu attribués sont modifiés car la progression n\'est pas mise à jour automatiquement.</p>';
 $string['gameprofile_title'] = 'Résultat du profil du joueur HEXAD-12';
@@ -231,7 +234,8 @@ $string['disruptor_desc'] = 'Motivé par le changement';
 $string['philanthropist_desc'] = 'Motivé par le sens et l\'utilité';
 $string['navigation'] = 'Navigation profil HEXAD-12';
 $string['backtocourse'] = 'Continuer';
-$string['partner_text'] = '<p>Développé par <a href="https://pimenko.com" target="_blank">Pimenko</a>.<br>
+$string['reset_profile'] = 'Réinitialiser l\'élément de jeu automatique';
+$string['partner_text'] = '<p>Développé par <a href="https://pimenko.com" target="_blank">Pimenko</a>, en collaboration avec le laboratoire LIRIS<br>
 Pour les retours techniques, merci d\'utiliser le <a href="https://github.com/DigiDago/moodle-format_ludilearn" target="_blank">répertoire Github</a><br><br>
 <b>À propos de Ludilearn+</b><br><br>
 Le projet LudiMoodle+, porté par l\'Université de Lyon, bénéficie d\'une aide de l\'État gérée par l\'Agence nationale de la recherche au titre de France 2030 portant la référence « ANR-22-FRAN-0005 »</p>';
