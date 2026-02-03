@@ -59,6 +59,9 @@ class restore_format_ludilearn_plugin extends restore_format_plugin {
         // Path to restore format_ludilearn_ele_user.
         $paths[] = new restore_path_element('gameele_user', $this->get_pathfor('/gameele_user'));
 
+        // Path to restore format_ludilearn_manual.
+        $paths[] = new restore_path_element('manual', $this->get_pathfor('/manual'));
+
         return $paths;
     }
 
@@ -203,6 +206,32 @@ class restore_format_ludilearn_plugin extends restore_format_plugin {
         // Insert data into the table format_ludilearn_attributio.
         $newitemid = $DB->insert_record('format_ludilearn_attributio', $data);
         $this->set_mapping('attributions', $data->id, $newitemid, true);
+    }
+
+    /**
+     * Process restore format_ludilearn_manual.
+     *
+     * @param array $data Data to restore.
+     *
+     * @return void
+     * @throws dml_exception
+     */
+    public function process_manual(array $data): void {
+        global $DB;
+
+        $data = (object)$data;
+
+        // Mapping of ids.
+        $data->courseid = $this->task->get_courseid();
+        $data->userid = $this->get_mappingid('user', $data->userid);
+
+        if ($data->userid == 0) {
+            return;
+        }
+
+        // Insert data into the table format_ludilearn_manual.
+        $newitemid = $DB->insert_record('format_ludilearn_manual', $data);
+        $this->set_mapping('manual', $data->id, $newitemid, true);
     }
 
     /**

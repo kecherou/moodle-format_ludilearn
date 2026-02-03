@@ -89,4 +89,18 @@ $functions = [
         'ajax' => true,
         'loginrequired' => true,
     ],
+    'format_ludilearn_get_state' => [
+        'classname' => 'format_ludilearn\external\get_state',
+        'description' => 'Get state (course, section, cm).',
+        'type' => 'read',
+        'ajax' => true,
+        'loginrequired' => true,
+    ],
+    'format_ludilearn_reset_profile' => [
+        'classname' => 'format_ludilearn\external\reset_profile',
+        'description' => 'Reset user profile for ludilearn format.',
+        'type' => 'write',
+        'ajax' => true,
+        'loginrequired' => true,
+    ],
 ];

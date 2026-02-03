@@ -65,6 +65,7 @@ $string['default_game_element'] = 'Default game element';
 $string['default_game_element_help'] = 'Default game element is the game element that will be assigned to all sections';
 $string['lesson'] = 'Lesson';
 $string['editgameeleements'] = 'Edit game elements';
+$string['editgameeleement'] = 'Edit game element';
 $string['gameelements'] = 'Game elements';
 $string['gameelement'] = 'Game element';
 $string['parameters'] = 'Settings';
@@ -130,7 +131,9 @@ $string['besttime'] = 'Best time';
 $string['averagetime'] = 'Average time';
 $string['reference_time'] = 'Reference time';
 $string['ranking'] = 'Ranking';
-$string['report'] = 'Report';
+$string['report'] = 'Participant tracking';
+$string['report_description'] = 'This page allows you to track participants\' progress and view the game element assigned to them. To personalize the gaming experience, you can change a participant\'s game element at any time: click on the name of the game element in the table and select a new element from the drop-down menu.';
+$string['manually_assigned'] = 'Custom assignment';
 $string['progression'] = 'Progression';
 $string['missinganswers'] = 'You must answer this question to validate the questionnaire';
 $string['equip'] = 'Equip';
@@ -231,7 +234,8 @@ $string['disruptor_desc'] = 'Motivated by change';
 $string['philanthropist_desc'] = 'Motivated by meaning and utility';
 $string['navigation'] = 'HEXAD-12 profil navigation';
 $string['backtocourse'] = 'Continue';
-$string['partner_text'] = '<p>Developed by <a href="https://pimenko.com">Pimenko</a>.<br>
+$string['reset_profile'] = 'Reset automatic game element';
+$string['partner_text'] = '<p>Developed by <a href="https://pimenko.com">Pimenko</a>, in collaboration with the LIRIS laboratory.<br>
 For technical feedback, please use the <a href="https://github.com/DigiDago/moodle-format_ludilearn">Github repository</a><br><br>
 <b>About Ludilearn+</b><br><br>
 The LudiMoodle+ project, led by the University of Lyon, has been awarded a grant from the French government, managed by the French National Research Agency  under the France 2030 program, under the reference « ANR-22-FRAN-0005 »</p>';
