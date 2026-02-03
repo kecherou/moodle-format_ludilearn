@@ -16,7 +16,7 @@
 /**
  * Settongs.
  *
- * @module      format_ludilearn/settings
+ * @module      format_ludilearn/items
  * @copyright   2025 Pimenko <support@pimenko.com><pimenko.com>
  * @author      Jordan Kesraoui
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

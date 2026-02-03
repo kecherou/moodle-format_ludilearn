@@ -21,18 +21,18 @@
     {}
 }}
 
-<div class="section-badge">
+<div id="ludilearn-badge-section" class="section-badge">
     <div class="row">
         <div class="col-sm-12 col-md-6  rightlined">
             <h4 class="text-center">{{ name }}</h4>
             <div class="row mr-1">
                 {{#parameters.gamified}}
                 <div class="col-3 mt-0 p-0">
-                    <div class="text-center mb-1 badge-number
+                    <div data-for="ludilearn-section-bronzecount" class="text-center mb-1 badge-number
                         {{#parameters.bronzecount }} badge-number-bronze spinning {{/parameters.bronzecount}}">
                         {{ parameters.bronzecount }}
                     </div>
-                    <img class="ludilearn-img little-img img-responsive d-block mx-auto"
+                    <img data-for="ludilearn-section-bronzeimg" class="ludilearn-img little-img img-responsive d-block mx-auto"
                         {{#parameters.bronzecount }}
                          src="{{config.wwwroot}}/course/format/ludilearn/pix/{{ world }}/badge/badge_bronze.svg"
                         {{/parameters.bronzecount}}
@@ -42,11 +42,11 @@
                          alt="Image badge">
                 </div>
                 <div class="col-3 mt-0 p-0">
-                    <div class="text-center mb-1 badge-number
+                    <div data-for="ludilearn-section-silvercount" class="text-center mb-1 badge-number
                         {{#parameters.silvercount }} badge-number-silver spinning {{/parameters.silvercount}}">
                         {{ parameters.silvercount }}
                     </div>
-                    <img class="ludilearn-img little-img img-responsive d-block mx-auto"
+                    <img data-for="ludilearn-section-silverimg" class="ludilearn-img little-img img-responsive d-block mx-auto"
                         {{#parameters.silvercount }}
                          src="{{config.wwwroot}}/course/format/ludilearn/pix/{{ world }}/badge/badge_silver.svg"
                         {{/parameters.silvercount}}
@@ -56,11 +56,11 @@
                          alt="Image badge">
                 </div>
                 <div class="col-3 mt-0 p-0">
-                    <div class="text-center mb-1 badge-number
+                    <div data-for="ludilearn-section-goldcount" class="text-center mb-1 badge-number
                         {{#parameters.goldcount }} badge-number-gold spinning {{/parameters.goldcount}}">
                         {{ parameters.goldcount }}
                     </div>
-                    <img class="ludilearn-img little-img img-responsive d-block mx-auto"
+                    <img data-for="ludilearn-section-goldimg" class="ludilearn-img little-img img-responsive d-block mx-auto"
                         {{#parameters.goldcount }}
                          src="{{config.wwwroot}}/course/format/ludilearn/pix/{{ world }}/badge/badge_gold.svg"
                         {{/parameters.goldcount}}
@@ -70,11 +70,11 @@
                          alt="Image badge">
                 </div>
                 <div class="col-3 mt-0 p-0">
-                    <div class="text-center mb-1 badge-number
+                    <div data-for="ludilearn-section-completioncount" class="text-center mb-1 badge-number
                     {{#parameters.completioncount }} badge-number-bronze spinning {{/parameters.completioncount}}">
                         {{ parameters.completioncount }}
                     </div>
-                    <img class="ludilearn-img little-img img-responsive d-block mx-auto"
+                    <img data-for="ludilearn-section-completionimg" class="ludilearn-img little-img img-responsive d-block mx-auto"
                         {{#parameters.completioncount }}
                          src="{{config.wwwroot}}/course/format/ludilearn/pix/{{ world }}/badge/badge_completion.svg"
                         {{/parameters.completioncount}}
@@ -90,7 +90,7 @@
                 </div>
                 {{/parameters.gamified}}
             </div>
-            <div class="section-summary">
+            <div data-for="ludilearn-section-summary" class="section-summary">
                 {{{ summary }}}
             </div>
         </div>
@@ -99,7 +99,7 @@
                 {{#cms}}
                     {{#label}}
                         <div class="col-12 mt-2">
-                            <div class="cm-score">
+                            <div class="cm-score" data-for="ludilearn-section-cm-labeltext">
                                 {{{ labeltext }}}
                             </div>
                         </div>
@@ -107,21 +107,22 @@
                     {{^label}}
                         <div class="col-6 col-sm-4 col-md-4 col-lg-4">
                             <div class="cm-badge">
-                                <div class="{{#parameters.restricted }}restricted{{/parameters.restricted}} {{^url}} nourl {{/url}}">
+                                <div class="{{#parameters.restricted }}restricted{{/parameters.restricted}} {{^url}} nourl {{/url}}" data-for="ludilearn-section-cm" data-id="{{id}}">
                                     <img class="{{#parameters.restricted }}restricted{{/parameters.restricted }} img-responsive mb-1 d-block mx-auto"
+                                         data-for="ludilearn-section-cm-badge" data-id="{{id}}"
                                         {{#parameters.gamified }}src="{{config.wwwroot}}/course/format/ludilearn/pix/{{ world }}/badge/badge_{{ parameters.badge }}.svg" {{/parameters.gamified }}
                                         {{^parameters.gamified }}src="{{config.wwwroot}}/course/format/ludilearn/pix/{{ world }}/none.svg" {{/parameters.gamified }}
                                          alt="Image badge">
 
                                     {{#parameters.gamified }}
                                     {{#parameters.completion}}
-                                        <div class="badgecompletion">
+                                        <div class="badgecompletion" data-for="ludilearn-section-cm-completion" data-id="{{id}}">
                                             <img src="{{config.wwwroot}}/course/format/ludilearn/pix/{{ world }}/badge/badge_completion.svg" alt="Icon completion">
                                         </div>
                                     {{/parameters.completion}}
                                     {{/parameters.gamified }}
                                     <p class="text-center scoretext">
-                                        <span class="cmname"><a href="{{ url }}" class="stretched-link">{{{ name }}}</a></span>
+                                        <span class="cmname"><a href="{{ url }}" class="stretched-link" data-for="ludilearn-section-cm-name" data-for="{{id}}">{{{ name }}}</a></span>
                                     </p>
                                     {{#parameters.restricted }}
                                         <div class="cmrestrictedinfo text-center small"><i class="fa fa-lock"></i> {{{ parameters.restrictedinfo }}}</div>
@@ -135,3 +136,4 @@
         </div>
     </div>
 </div>
+{{> format_ludilearn/components/section }}
