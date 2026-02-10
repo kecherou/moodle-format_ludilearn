@@ -629,6 +629,15 @@ class avatar extends game_element {
     }
 
     /**
+     * Get a list of parameters.
+     *
+     * @return array List of parameters.
+     */
+    public static function get_parameters_list(): array {
+        return ['thresholdtoearn'];
+    }
+
+    /**
      * Update avatar elements.
      *
      * @param int $courseid The course id.
@@ -729,6 +738,50 @@ class avatar extends game_element {
                 }
             }
         }
+    }
+
+    /**
+     * Update the parameters of a course.
+     *
+     * @param int $courseid  The course ID.
+     * @param int $thresholdtoearn The value for the thresholdtoearn parameter.
+     *
+     * @return bool True if the parameters were updated successfully, false otherwise.
+     * @throws \dml_exception
+     */
+    public static function update_course_parameters(int $courseid, int $thresholdtoearn): bool {
+        global $DB;
+
+        // Retrieve all game elements of the course.
+        $gameelements = $DB->get_records('format_ludilearn_elements', ['courseid' => $courseid, 'type' => 'avatar']);
+
+        if (!$gameelements) {
+            return false;
+        } else {
+            foreach ($gameelements as $gameelement) {
+                // Retrieve existing values for penalties parameter.
+                $thresholdtoearnrecord = $DB->get_record('format_ludilearn_params',
+                        ['gameelementid' => $gameelement->id,
+                                'name' => 'thresholdtoearn']);
+                // Check value.
+                if ($thresholdtoearn < 0) {
+                    $thresholdtoearn = 0;
+                }
+
+                // If existing update values, else add value.
+                if ($thresholdtoearnrecord) {
+                    $thresholdtoearnrecord->value = $thresholdtoearn;
+                    $DB->update_record('format_ludilearn_params', $thresholdtoearnrecord);
+                } else {
+                    $thresholdtoearnrecord = new stdClass();
+                    $thresholdtoearnrecord->gameelementid = $gameelement->id;
+                    $thresholdtoearnrecord->name = 'thresholdtoearn';
+                    $thresholdtoearnrecord->value = $thresholdtoearn;
+                    $DB->insert_record('format_ludilearn_params', $thresholdtoearnrecord);
+                }
+            }
+        }
+        return true;
     }
 
     /**

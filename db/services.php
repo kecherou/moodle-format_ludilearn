@@ -75,6 +75,13 @@ $functions = [
         'ajax' => true,
         'loginrequired' => true,
     ],
+    'format_ludilearn_update_avatar_parameters' => [
+        'classname' => 'format_ludilearn\external\parameters\update_avatar_parameters',
+        'description' => 'Update course parameters for avatar element',
+        'type' => 'write',
+        'ajax' => true,
+        'loginrequired' => true,
+    ],
     'format_ludilearn_update_assignmentbysection_parameters' => [
         'classname' => 'format_ludilearn\external\parameters\update_assignmentbysection_parameters',
         'description' => 'Update course parameters for assignment by section element',
