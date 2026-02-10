@@ -178,6 +178,15 @@ class timer extends game_element {
     }
 
     /**
+     * Get a list of parameters.
+     *
+     * @return array List of parameters.
+     */
+    public static function get_parameters_list(): array {
+        return ['penalties'];
+    }
+
+    /**
      * Update game elements when quiz has immediate feedback.
      *
      * @param int $attemptid The attempt id.
