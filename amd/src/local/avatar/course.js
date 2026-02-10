@@ -72,9 +72,9 @@ export default class extends BaseComponent {
             return;
         }
         let src = config.wwwroot + '/course/format/ludilearn/pix/' + element.world + '/avatar';
-        if (element.item-equiped-1) {
+        if (element['item-equiped-1']) {
             target.className = 'avatar-slot slot-1 item-equiped';
-            target.src = src + '/items/images/image-01-' + element.item-equiped-1 + '.svg';
+            target.src = src + '/items/images/image-01-' + element['item-equiped-1'] + '.svg';
         } else {
             target.className = 'avatar-slot slot-1';
             target.src = src + '/item_img_default.svg';
@@ -87,9 +87,9 @@ export default class extends BaseComponent {
             return;
         }
         let src = config.wwwroot + '/course/format/ludilearn/pix/' + element.world + '/avatar';
-        if (element.item-equiped-2) {
+        if (element['item-equiped-2']) {
             target.className = 'avatar-slot slot-2 item-equiped';
-            target.src = src + '/items/images/image-02-' + element.item-equiped-2 + '.svg';
+            target.src = src + '/items/images/image-02-' + element['item-equiped-2'] + '.svg';
         } else {
             target.className = 'avatar-slot slot-2';
             target.src = src + '/item_img_default.svg';
@@ -102,9 +102,9 @@ export default class extends BaseComponent {
             return;
         }
         let src = config.wwwroot + '/course/format/ludilearn/pix/' + element.world + '/avatar';
-        if (element.item-equiped-3) {
+        if (element['item-equiped-3']) {
             target.className = 'avatar-slot slot-3 item-equiped';
-            target.src = src + '/items/images/image-03-' + element.item-equiped-3 + '.svg';
+            target.src = src + '/items/images/image-03-' + element['item-equiped-3'] + '.svg';
         } else {
             target.className = 'avatar-slot slot-3';
             target.src = src + '/item_img_default.svg';
@@ -117,9 +117,9 @@ export default class extends BaseComponent {
             return;
         }
         let src = config.wwwroot + '/course/format/ludilearn/pix/' + element.world + '/avatar';
-        if (element.item-equiped-4) {
+        if (element['item-equiped-4']) {
             target.className = 'avatar-slot slot-4 item-equiped';
-            target.src = src + '/items/images/image-04-' + element.item-equiped-4 + '.svg';
+            target.src = src + '/items/images/image-04-' + element['item-equiped-4'] + '.svg';
         } else {
             target.className = 'avatar-slot slot-4';
             target.src = src + '/item_img_default.svg';
@@ -132,9 +132,9 @@ export default class extends BaseComponent {
             return;
         }
         let src = config.wwwroot + '/course/format/ludilearn/pix/' + element.world + '/avatar';
-        if (element.item-equiped-5) {
+        if (element['item-equiped-5']) {
             target.className = 'avatar-slot slot-5 item-equiped';
-            target.src = src + '/items/images/image-05-' + element.item-equiped-5 + '.svg';
+            target.src = src + '/items/images/image-05-' + element['item-equiped-5'] + '.svg';
         } else {
             target.className = 'avatar-slot slot-5';
             target.src = src + '/item_img_default.svg';
@@ -147,9 +147,9 @@ export default class extends BaseComponent {
             return;
         }
         let src = config.wwwroot + '/course/format/ludilearn/pix/' + element.world + '/avatar';
-        if (element.item-equiped-6) {
+        if (element['item-equiped-6']) {
             target.className = 'avatar-slot slot-6 item-equiped';
-            target.src = src + '/items/images/image-06-' + element.item-equiped-6 + '.svg';
+            target.src = src + '/items/images/image-06-' + element['item-equiped-6'] + '.svg';
         } else {
             target.className = 'avatar-slot slot-6';
             target.src = src + '/item_img_default.svg';
