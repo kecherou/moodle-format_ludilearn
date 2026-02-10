@@ -148,7 +148,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/str', 'core/modal_factory
 
                 equipButton.on('click').on('click', function() {
                     setItemEquiped(slot, theme);
-                    $('.avatar-item-equiped').removeClass('avatar-item-equiped');
+                    $('.avatar-item-equiped.avatar-slot-' + slot).removeClass('avatar-item-equiped');
                     $(event.currentTarget).addClass('avatar-item-equiped');
                     equipButton.hide();
                 });
