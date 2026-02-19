@@ -41,7 +41,7 @@ $PAGE->set_context($context);
 $PAGE->set_title(get_string('coursetitle', 'moodle', ['course' => $course->fullname]));
 $PAGE->set_heading(
     $course->fullname . ' : ' .
-    get_string('editgameeleements', 'format_ludilearn')
+    get_string('settingsname', 'format_ludilearn')
 );
 $PAGE->add_body_class('limitedwidth');
 $format = course_get_format($course);
