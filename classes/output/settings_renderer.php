@@ -105,6 +105,9 @@ class settings_renderer extends plugin_renderer_base {
         $params = ['id' => $courseid, 'type' => 'updateprogression', 'hideheader' => 1];
         $url = new moodle_url("$CFG->wwwroot/course/format/ludilearn/settings_game_elements.php", $params);
         $toolsview[$url->out(false)] = get_string('settings:updateprogression', 'format_ludilearn');
+        $params = ['id' => $courseid, 'hideheader' => 1];
+        $url = new moodle_url("$CFG->wwwroot/course/format/ludilearn/report.php", $params);
+        $toolsview[$url->out(false)] = get_string('settings:report', 'format_ludilearn');
 
         // Render tertiary navigation.
         $menu[][get_string('settings')] = $settingsview;
