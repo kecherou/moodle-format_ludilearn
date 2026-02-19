@@ -1412,6 +1412,11 @@ class manager {
         $gameelementtype = $options['default_game_element'];
         $assignment = $options['assignment'];
         $notanswered = false;
+        $isenrolled = false;
+        if (is_enrolled($context, $userid)) {
+            $isenrolled = true;
+        }
+
         // Verify if the cours is assigned automatically and if the user has answered yet to the questionnaire.
         if ($assignment == 'automatic') {
             $profile = $DB->get_record('format_ludilearn_profile', ['userid' => $userid]);
@@ -1425,16 +1430,11 @@ class manager {
             }
         }
 
-        $isenrolled = false;
-        if (is_enrolled($context, $userid)) {
-            $isenrolled = true;
-        }
-
         // If the user has capabilities to update the course or is role switched and has an attribution for the course,
         // And he is not enrolled or the course is assigned automatically.
-
-        if ((has_capability('moodle/course:update', $context)
-                || (is_role_switched($courseid) && $this->has_attribution($courseid, $userid)))
+        if (($USER->id == $userid) &&
+                ((has_capability('moodle/course:update', $context)
+                || (is_role_switched($courseid) && $this->has_attribution($courseid, $userid))))
                 && (($assignment == 'automatic') || !$isenrolled)) {
             // Verify is there is an attribution for this user.
             $attributionexist = $this->has_attribution($courseid, $userid);
