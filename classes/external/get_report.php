@@ -101,6 +101,10 @@ class get_report extends external_api {
                 $manuallyassigned = true;
             } else {
                 $type = $manager->get_element_type($courseid, $userrenrolled->id);
+                // If the user has no assigned type, we consider it as nogamified.
+                if (!$type) {
+                    $type = 'nogamified';
+                }
             }
             $elementtypeseditable = new element_types_editable($course, $user, $type, $manuallyassigned);
             $renderer = new editable_renderer($PAGE, RENDERER_TARGET_AJAX);
