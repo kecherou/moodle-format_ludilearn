@@ -48,7 +48,7 @@ class reset_profile extends external_api {
         global $USER, $DB;
         $context = context_system::instance();
         self::validate_context($context);
-        require_capability('format/ludilearn:view', $context);
+        has_capability('moodle/course:update', $context);
 
         // Verify if the user has a profile to reset.
         $profile = $DB->get_record('format_ludilearn_profile', ['userid' => $userid]);
