@@ -1394,10 +1394,10 @@ class manager {
      * @throws \dml_exception
      */
     public function get_element_type(int $courseid, int $userid): string|bool {
-        global $DB;
+        global $CFG, $DB, $USER;
         $context = context_course::instance($courseid);
-        $manager = new manager();
         $format = course_get_format($courseid);
+        require_once($CFG->libdir . '/accesslib.php');
 
 
         // Verify if the game elements has been assigned manually to the user.
@@ -1412,6 +1412,11 @@ class manager {
         $gameelementtype = $options['default_game_element'];
         $assignment = $options['assignment'];
         $notanswered = false;
+        $isenrolled = false;
+        if (is_enrolled($context, $userid)) {
+            $isenrolled = true;
+        }
+
         // Verify if the cours is assigned automatically and if the user has answered yet to the questionnaire.
         if ($assignment == 'automatic') {
             $profile = $DB->get_record('format_ludilearn_profile', ['userid' => $userid]);
@@ -1419,28 +1424,39 @@ class manager {
                 $gameelementtype = $profile->type;
 
                 // Verify if the user has attributions.
-                $manager->check_attribution_course($courseid, $userid, $gameelementtype);
+                $this->check_attribution_course($courseid, $userid, $gameelementtype);
             } else {
                 $notanswered = true;
             }
         }
 
-        $isenrolled = false;
-        if (is_enrolled($context, $userid)) {
-            $isenrolled = true;
-        }
-
-        // If the user has capabilities to update the course and he is not enrolled or the course is assigned automatically.
-        if (has_capability('moodle/course:update', $context) && (($assignment == 'automatic') || !$isenrolled)) {
+        // If the user has capabilities to update the course or is role switched and has an attribution for the course,
+        // And he is not enrolled or the course is assigned automatically.
+        if (($USER->id == $userid) &&
+                ((has_capability('moodle/course:update', $context)
+                || (is_role_switched($courseid) && $this->has_attribution($courseid, $userid))))
+                && (($assignment == 'automatic') || !$isenrolled)) {
             // Verify is there is an attribution for this user.
-            $attributionexist = $manager->has_attribution($courseid, $userid);
+            $attributionexist = $this->has_attribution($courseid, $userid);
             // If not attribution exist, create one with nogamified type.
             $gameelementtype = 'nogamified';
             if (!$attributionexist) {
-                $manager->check_attribution_course($courseid, $userid, $gameelementtype);
+                $this->check_attribution_course($courseid, $userid, $gameelementtype);
             }
             $notanswered = false;
         }
+
+        // If the user is not enrolled and doesn't have game element assiged but his role is switched.
+        if ($USER->id == $userid && !$isenrolled && is_role_switched($courseid) && !$this->has_attribution($courseid, $userid)) {
+
+            $this->sync_user_attribution_by_user(
+                $courseid,
+                $options['assignment'],
+                $options['default_game_element'],
+                $userid);
+            return $this->get_element_type($courseid, $userid);
+        }
+
         if ($notanswered) {
             return false;
         }
